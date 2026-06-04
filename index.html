@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Базова ГИС Карта - България</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        /* Картата трябва да заема целия екран */
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        body { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // 3. Инициализиране на картата
+        // [42.7339, 25.4858] са приблизителните географски координати на центъра на България. 7 е нивото на приближение (zoom).
+        const map = L.map('map').setView([42.7339, 25.4858], 7);
+
+        // 4. Добавяне на базов слой (картина/плочки) от OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Бонус: Добавяне на една тестова маркерна точка (напр. София)
+        L.marker([42.6977, 23.3219]).addTo(map)
+            .bindPopup('София - Тестова точка за риск.')
+            .openPopup();
+
+	// Използваме fetch, за да вземем данните от Python през REST API
+fetch('http://127.0.0.1:5000/api/risk-zones')
+    .then(response => response.json()) // Превръщаме отговора в JSON обект
+    .then(geoJsonData => {
+        // Добавяме GeoJSON слоя към Leaflet картата
+        L.geoJSON(geoJsonData, {
+            style: function(feature) {
+                // Стилизираме полигона в червено, тъй като е рискова зона
+                return {
+                    color: "red",
+                    fillColor: "#ff0000",
+                    fillOpacity: 0.4,
+                    weight: 2
+                };
+            }
+        })
+        .bindPopup(function (layer) {
+            // Когато кликнем върху зоната, ще се покажат свойствата от Python (properties)
+            return `<h3>${layer.feature.properties.name}</h3>
+                    <p><b>Статус:</b> ${layer.feature.properties.level}</p>
+                    <p>${layer.feature.properties.description}</p>`;
+        })
+        .addTo(map);
+    })
+    .catch(error => console.error('Грешка при извличане на ГИС данните:', error));
+    </script>
+</body>
+</html>
