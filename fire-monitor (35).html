@@ -1,0 +1,2362 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Monitor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --accent: #8b5cf6;
+    --accent-dark: #6d28d9;
+    --sidebar-bg: rgba(21,18,27,0.96);
+    --text-dark: #f1eef7;
+    --text-mid: #b3a6c9;
+    --muted-text: #9a8db3;
+    --border: #3c3448;
+    --input-bg: #241f2e;
+    --btn-bg: #2a2434;
+    --btn-bg-hover: #362e42;
+    --btn-border: #4a4058;
+    --info-btn-bg: #241f2e;
+    --info-btn-border: #5c5069;
+    --info-btn-color: #c9bcdb;
+    --scrollbar-thumb: #4a4058;
+    --toolbar-bg: rgba(21,14,30,0.9);
+    --toolbar-bg-hover: rgba(255,255,255,0.12);
+  }
+
+  body.theme-orange{
+    --accent: #ee8a1f;
+    --accent-dark: #d97812;
+    --sidebar-bg: rgba(255,255,255,0.97);
+    --text-dark: #2b2b2b;
+    --text-mid: #555;
+    --muted-text: #888;
+    --border: #e2e2e2;
+    --input-bg: #fff;
+    --btn-bg: #f5f5f5;
+    --btn-bg-hover: #eaeaea;
+    --btn-border: #c9c9c9;
+    --info-btn-bg: #fff;
+    --info-btn-border: #999;
+    --info-btn-color: #777;
+    --scrollbar-thumb: #ccc;
+    --toolbar-bg: rgba(28,38,52,0.88);
+    --toolbar-bg-hover: rgba(255,255,255,0.12);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    height: 100%;
+    margin: 0;
+    font-family: "Segoe UI", Roboto, -apple-system, Helvetica, Arial, sans-serif;
+    color: var(--text-dark);
+    overflow: hidden;
+  }
+
+  #app{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+  }
+
+  #map{
+    position: absolute;
+    inset: 0;
+    background: #e9edf0;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-height: 100%;
+    width: 268px;
+    background: transparent;
+    z-index: 1000;
+    overflow: hidden;
+    font-size: 12.5px;
+  }
+
+  .panel-header{
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 12px;
+    letter-spacing: .2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px 6px 0 0;
+    margin-bottom: 0;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.3);
+    transition: border-radius .2s ease, margin-bottom .2s ease;
+  }
+  .panel-header.collapsed{
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .panel-header-title{
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .panel-chevron{
+    font-size: 12px;
+    flex-shrink: 0;
+    transition: transform .25s ease;
+  }
+  .panel-header.collapsed .panel-chevron{
+    transform: rotate(-90deg);
+  }
+
+  .panel-body{
+    background: var(--sidebar-bg);
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.25);
+    padding: 9px 14px 12px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    transition: max-height .25s ease, padding .25s ease, border-color .25s ease;
+  }
+  .panel-body.collapsed{
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-color: transparent;
+  }
+
+  /* Rapid Damage Assessment: собствен вътрешен scroller, за да не покрива km ориентирчето */
+  .panel-body{ overflow-y: auto; }
+  .panel-body::-webkit-scrollbar{ width: 6px; }
+  .panel-body::-webkit-scrollbar-thumb{ background: var(--scrollbar-thumb); border-radius: 3px; }
+
+  .option-row{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-dark);
+  }
+  .option-row input[type="checkbox"]{
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .option-row span.label-text{
+    flex: 1;
+  }
+
+  .option-row.strong span.label-text{ font-weight: 700; }
+
+  .info-btn{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid var(--info-btn-border);
+    background: var(--info-btn-bg);
+    color: var(--info-btn-color);
+    font-size: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+  }
+  .info-btn:hover{ background: var(--btn-bg-hover); }
+
+  .layer-status{
+    width: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .map-option-note{
+    min-height: 14px;
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--muted-text);
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+  .map-option-note.warning{ color: #c0392b; }
+
+  .field-row{
+    margin-top: 8px;
+  }
+  .field-row label{
+    display: block;
+    font-size: 11px;
+    color: var(--text-mid);
+    margin-bottom: 3px;
+  }
+  .field-row select{
+    width: 100%;
+    padding: 5px 6px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--input-bg);
+    color: var(--text-dark);
+  }
+
+  .date-display{
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--text-dark);
+    background: var(--input-bg);
+  }
+  .date-display i{ color: var(--text-mid); }
+
+  .nav-arrows{
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .nav-arrows button{
+    width: 46%;
+    padding: 4px 0;
+    background: var(--btn-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-mid);
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .nav-arrows button:hover{ background: var(--btn-bg-hover); }
+
+  .section-label{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    margin: 9px 0 3px;
+    color: var(--text-dark);
+    letter-spacing: .2px;
+  }
+
+  .range-label{
+    text-align: center;
+    font-style: italic;
+    color: var(--text-mid);
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .quick-range{
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .quick-range button{
+    flex: 1;
+    padding: 5px 2px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--btn-bg);
+    color: var(--text-dark);
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .quick-range button:hover{ background: var(--btn-bg-hover); }
+  .quick-range button.active{
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .full-btn{
+    width: 100%;
+    padding: 5px 0;
+    font-size: 12px;
+    background: var(--btn-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dark);
+    cursor: pointer;
+    margin-bottom: 6px;
+  }
+  .full-btn:hover{ background: var(--btn-bg-hover); }
+  .full-btn.active{
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .cal-btn-row{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 6px;
+  }
+  .cal-btn-row button{
+    width: 100%;
+    padding: 5px 0;
+    background: var(--btn-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-mid);
+    cursor: pointer;
+  }
+  .cal-btn-row button:hover{ background: var(--btn-bg-hover); }
+
+  .from-to{
+    text-align: center;
+    font-size: 12px;
+    margin: 6px 0 3px;
+    color: var(--text-dark);
+  }
+  .from-to strong{ font-weight: 700; }
+
+  .locator-btn{
+    width: 100%;
+    padding: 7px 0;
+    margin-top: 8px;
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    border-radius: 3px;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: .2px;
+  }
+  .locator-btn:hover{ background: var(--btn-bg-hover); }
+
+  /* ---------- Right toolbar ---------- */
+  .map-toolbar{
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    background: var(--toolbar-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .map-toolbar button{
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .map-toolbar button:last-child{ border-bottom: none; }
+  .map-toolbar button:hover{ background: var(--toolbar-bg-hover); }
+  .map-toolbar button.active-tool{ background: var(--accent); }
+
+  /* Toolbar collapse (hamburger toggles everything except itself) */
+  .map-toolbar.collapsed button:not(#toolMenu){
+    display: none;
+  }
+
+  /* Hover tooltip, matches reference: dark pill, orange border, sits left of the button */
+  .map-toolbar button{ position: relative; }
+  .toolbar-tooltip{
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+    background: #1c2634;
+    color: #fff;
+    border: 2px solid var(--accent);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 1200;
+  }
+  .map-toolbar button:hover .toolbar-tooltip,
+  .map-toolbar button:focus-visible .toolbar-tooltip{
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  /* Rubber-band rectangle for "Zoom to area" */
+  .zoom-area-box{
+    position: absolute;
+    border: 2px dashed var(--accent);
+    background: rgba(238,138,31,0.15);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ---------- Legend panel ---------- */
+  .legend-panel{
+    position: absolute;
+    top: 16px;
+    right: 66px;
+    width: 300px;
+    max-height: calc(100vh - 32px);
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+    z-index: 1050;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .legend-panel.open{ display: flex; }
+
+  .legend-header{
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .legend-header-title{ display: flex; align-items: center; gap: 8px; }
+  .legend-header button{
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .legend-header button:hover{ background: rgba(255,255,255,0.18); }
+
+  .legend-body{
+    padding: 14px 16px;
+    overflow-y: auto;
+  }
+  .legend-section{ margin-bottom: 16px; }
+  .legend-section:last-child{ margin-bottom: 0; }
+  .legend-section-title{
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+  }
+  .legend-row{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 12.5px;
+    color: var(--text-mid);
+  }
+  .legend-swatch{
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .legend-swatch.shape-triangle-down{
+    width: 0;
+    height: 0;
+    background: transparent !important;
+    border: none;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top-width: 11px;
+    border-top-style: solid;
+  }
+  .legend-swatch.shape-triangle-up{
+    width: 0;
+    height: 0;
+    background: transparent !important;
+    border: none;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom-width: 11px;
+    border-bottom-style: solid;
+  }
+  .legend-swatch.shape-diamond{
+    width: 12px;
+    height: 12px;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+  .legend-swatch.shape-rect{
+    width: 24px;
+    height: 9px;
+    border-radius: 2px;
+  }
+  .legend-empty{
+    color: var(--muted-text);
+    font-style: italic;
+    font-size: 12.5px;
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  @media (max-width: 720px){
+    .legend-panel{ right: 8px; left: 8px; width: auto; top: 66px; }
+    .locator-panel{ right: 8px; left: 8px; width: auto; }
+    .fire-chart-panel{ right: 8px; left: 8px; width: auto; top: 66px; }
+  }
+
+  /* Leaflet zoom control default hidden, using our own */
+  .leaflet-control-zoom{ display: none; }
+  .leaflet-control-attribution{
+    font-size: 10px;
+    background: rgba(255,255,255,0.7) !important;
+  }
+
+  .leaflet-control-scale{ margin-bottom: 10px !important; margin-left: 10px !important; }
+  .leaflet-control-scale-line{
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #999 !important;
+    border-top: 1px solid #999 !important;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    white-space: nowrap;
+  }
+
+  /* ---------- Burnt Area Locator panel ---------- */
+  .locator-panel{
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 320px;
+    max-height: calc(100vh - 110px);
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    z-index: 1060;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .locator-panel.open{ display: flex; }
+
+  .locator-header{
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .locator-header-title{ display: flex; align-items: center; gap: 8px; }
+  .locator-header button{
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .locator-header button:hover{ background: rgba(255,255,255,0.18); }
+
+  .locator-body{
+    padding: 12px 14px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .locator-daterange{
+    text-align: center;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--text-dark);
+  }
+
+  .locator-field-row{ display: flex; flex-direction: column; gap: 4px; }
+  .locator-field-row label{ font-size: 11px; color: var(--text-mid); }
+  .locator-field-row select{
+    padding: 6px 8px;
+    font-size: 12.5px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-dark);
+  }
+
+  .locator-legend-label{ font-size: 11px; color: var(--text-mid); margin-bottom: -4px; }
+  .locator-legend-row{ display: flex; gap: 6px; }
+  .locator-filter-btn{
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 14px;
+    border: 2px solid;
+    background: transparent;
+    color: var(--text-dark);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity .15s ease;
+  }
+  .locator-filter-btn.active{ opacity: 1; }
+  .locator-filter-btn.filter-red{ border-color: #e53935; }
+  .locator-filter-btn.filter-orange{ border-color: #fb8c00; }
+  .locator-filter-btn.filter-blue{ border-color: #1e88e5; }
+
+  .locator-list{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  .locator-item{
+    border: 2px solid;
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--btn-bg);
+  }
+  .locator-item.bucket-recent{ border-color: #e53935; }
+  .locator-item.bucket-month{ border-color: #fb8c00; }
+  .locator-item.bucket-older{ border-color: #1e88e5; }
+  .locator-item-text{ font-size: 12px; color: var(--text-dark); line-height: 1.35; }
+  .locator-item-text strong{ display: block; font-weight: 700; }
+  .locator-item-actions{ display: flex; gap: 6px; flex-shrink: 0; }
+  .locator-item-actions button{
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text-mid);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .locator-item-actions button:hover{ background: var(--btn-bg-hover); }
+
+  /* ---------- Fire Danger Chart panel ---------- */
+  .fire-chart-panel{
+    position: absolute;
+    top: 16px;
+    right: 66px;
+    width: 380px;
+    max-height: calc(100vh - 110px);
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    z-index: 1070;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .fire-chart-panel.open{ display: flex; }
+
+  .fire-chart-header{
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .fire-chart-header-title{ display: flex; align-items: center; gap: 8px; }
+  .fire-chart-header button{
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .fire-chart-header button:hover{ background: rgba(255,255,255,0.18); }
+
+  .fire-chart-topinfo{
+    padding: 10px 14px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .fire-chart-coord{ font-size: 12px; font-weight: 700; color: var(--text-dark); }
+
+  .fire-chart-body{
+    padding: 6px 14px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .fire-chart-item-header{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .fire-chart-status{ font-size: 11px; font-weight: 400; font-style: italic; color: var(--muted-text); }
+  .fire-chart-canvas-wrap{ height: 140px; position: relative; }
+
+
+  /* Sidebar collapse for small screens */
+  .sidebar-toggle{
+    display: none;
+  }
+
+  @media (max-width: 720px){
+    .sidebar{ width: 82%; max-width: 300px; transform: translateX(-100%); transition: transform .25s ease; }
+    .sidebar.open{ transform: translateX(0); }
+    .sidebar-toggle{
+      display: flex;
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 1100;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      background: var(--toolbar-bg);
+      color: #fff;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="map"></div>
+
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Отвори менюто"><i class="fa-solid fa-bars"></i></button>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Map Options -->
+    <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-gear"></i>Map Options</span></div>
+    <div class="panel-body">
+      <label class="option-row">
+        <input type="checkbox" class="map-option-check" data-layer="settlement" id="layerSettlement">
+        <span class="label-text">Human Settlement Layer</span>
+        <span class="layer-status" id="statusSettlement"></span>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" class="map-option-check" data-layer="protected" id="layerProtected">
+        <span class="label-text">Protected Areas Layer</span>
+        <span class="layer-status" id="statusProtected"></span>
+        <button class="info-btn" title="World Database on Protected Areas (WDPA)">i</button>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" class="map-option-check" data-layer="clc" id="layerClc">
+        <span class="label-text">Corine Land Cover</span>
+        <span class="layer-status" id="statusClc"></span>
+        <button class="info-btn" title="Corine Land Cover 2020">i</button>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" class="map-option-check" data-layer="fuels" id="layerFuels">
+        <span class="label-text">FUELS</span>
+        <span class="layer-status" id="statusFuels"></span>
+        <button class="info-btn" title="EFFIS European Fuel Map">i</button>
+      </label>
+      <div class="map-option-note" id="mapOptionNote"></div>
+    </div>
+
+    <!-- Forecasts -->
+    <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-angles-right"></i>Forecasts</span></div>
+    <div class="panel-body">
+      <label class="option-row strong">
+        <input type="checkbox" id="fireDangerToggle">
+        <span class="label-text">FIRE DANGER FORECAST</span>
+        <span class="layer-status" id="statusFireDanger"></span>
+        <button class="info-btn" title="Информация">i</button>
+      </label>
+
+      <div class="field-row">
+        <label for="forecastSource">Source</label>
+        <select id="forecastSource">
+          <option>ECMWF (8 km res.)</option>
+          <option>Meteo France (10 km res.)</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <label for="forecastIndex">Index</label>
+        <select id="forecastIndex"></select>
+      </div>
+
+      <label class="option-row strong" style="margin-top:10px;">
+        <input type="checkbox" id="lightningToggle">
+        <span class="label-text">LIGHTNING FORECAST</span>
+        <span class="layer-status" id="statusLightning"></span>
+        <button class="info-btn" title="Информация">i</button>
+      </label>
+
+      <div class="date-display" id="forecastDateBtn" style="cursor:pointer;">
+        <i class="fa-regular fa-calendar"></i>
+        <span id="forecastDateDisplay">01 Aug 2024</span>
+        <input type="date" id="forecastDateInput" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
+      </div>
+
+      <div class="nav-arrows">
+        <button id="forecastPrevBtn" aria-label="Предишен ден"><i class="fa-solid fa-angle-left"></i></button>
+        <button id="forecastNextBtn" aria-label="Следващ ден"><i class="fa-solid fa-angle-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Rapid Damage Assessment -->
+    <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-triangle-exclamation"></i>Rapid Damage Assessment</span></div>
+    <div class="panel-body" id="rdaPanelBody">
+      <div class="range-label">Select a date-range</div>
+
+      <div class="quick-range">
+        <button class="active" data-range="1d">Last 1 Day</button>
+        <button data-range="7d">Last 7 Days</button>
+        <button data-range="30d">Last 30 Days</button>
+      </div>
+
+      <button class="full-btn" id="rdaFireSeasonBtn" data-range="season">Fire Season</button>
+
+      <div class="cal-btn-row">
+        <button aria-label="Избери дата" id="rdaCalendarBtn"><i class="fa-regular fa-calendar"></i></button>
+        <input type="date" id="rdaDateInput" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
+      </div>
+
+      <div class="nav-arrows">
+        <button id="rdaPrevBtn" aria-label="Предишен период"><i class="fa-solid fa-angle-left"></i></button>
+        <button id="rdaNextBtn" aria-label="Следващ период"><i class="fa-solid fa-angle-right"></i></button>
+      </div>
+
+      <div class="from-to" id="rdaFromTo"><strong>From:</strong> 26 May 2025 &nbsp; <strong>To:</strong> 27 May 2025</div>
+
+      <div class="section-label">ACTIVE FIRES <button class="info-btn" title="Информация">i</button></div>
+      <label class="option-row">
+        <input type="checkbox" id="chkModisActive">
+        <span class="label-text">MODIS</span>
+        <span class="layer-status" id="statusModisActive"></span>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" id="chkViirsActive">
+        <select id="viirsSourceSelect" style="margin-left:4px; flex:1; padding:4px 6px; font-size:12px; border:1px solid var(--border); border-radius:3px;">
+          <option>VIIRS (all)</option>
+          <option>VIIRS (Suomi NPP)</option>
+          <option>VIIRS (NOAA-20)</option>
+        </select>
+        <span class="layer-status" id="statusViirsActive"></span>
+      </label>
+
+      <div class="section-label">BURNT AREAS <button class="info-btn" title="Информация">i</button></div>
+      <label class="option-row">
+        <input type="checkbox" id="chkModisBurnt">
+        <span class="label-text">MODIS/Sentinel2 <em>(supervised)</em></span>
+        <span class="layer-status" id="statusModisBurnt"></span>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" id="chkFireSeverity">
+        <span class="label-text">FIRE SEVERITY <em>(weekly updated)</em></span>
+        <span class="layer-status" id="statusFireSeverity"></span>
+      </label>
+      <label class="option-row">
+        <input type="checkbox" id="chkNrtBurnt">
+        <span class="label-text">MODIS &amp; VIIRS NRT</span>
+        <span class="layer-status" id="statusNrtBurnt"></span>
+      </label>
+      <div class="map-option-note" id="rdaNote"></div>
+
+      <button class="locator-btn" id="burntAreaLocatorBtn">Burnt Area Locator</button>
+    </div>
+  </aside>
+
+  <!-- ===================== RIGHT MAP TOOLBAR ===================== -->
+  <div class="map-toolbar">
+    <button id="toolMenu" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+    <button id="toolSearch" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button id="toolHome" aria-label="Home"><i class="fa-solid fa-house"></i></button>
+    <button id="toolZoomIn" aria-label="Zoom in"><i class="fa-solid fa-plus"></i></button>
+    <button id="toolZoomOut" aria-label="Zoom out"><i class="fa-solid fa-minus"></i></button>
+    <button id="toolFullscreen" aria-label="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+    <button id="toolZoomArea" aria-label="Zoom to area"><i class="fa-solid fa-vector-square"></i></button>
+    <button id="toolLocation" aria-label="Locate current position"><i class="fa-solid fa-location-dot"></i></button>
+    <button id="toolLayers" aria-label="Base layers"><i class="fa-solid fa-table-cells"></i></button>
+    <button id="toolTheme" aria-label="Theme"><i class="fa-solid fa-palette"></i></button>
+    <button id="toolList" aria-label="Legend"><i class="fa-solid fa-list"></i></button>
+  </div>
+
+  <!-- ===================== LEGEND PANEL ===================== -->
+  <div class="legend-panel" id="legendPanel">
+    <div class="legend-header">
+      <span class="legend-header-title"><i class="fa-solid fa-map"></i> Legend</span>
+      <button id="legendCloseBtn" aria-label="Затвори легендата"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="legend-body" id="legendBody"></div>
+  </div>
+
+  <!-- ===================== BURNT AREA LOCATOR PANEL ===================== -->
+  <div class="locator-panel" id="locatorPanel">
+    <div class="locator-header">
+      <span class="locator-header-title"><i class="fa-solid fa-fire"></i> Burnt Area Locator</span>
+      <button id="locatorCloseBtn" aria-label="Затвори"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="locator-body">
+      <div class="locator-daterange" id="locatorDateRange">From — To —</div>
+
+      <div class="locator-field-row">
+        <label for="locatorProvince">Province</label>
+        <select id="locatorProvince">
+          <option>All provinces</option>
+        </select>
+      </div>
+
+      <div class="locator-legend-label">Legend</div>
+      <div class="locator-legend-row">
+        <button class="locator-filter-btn filter-red active" data-bucket="recent" id="locatorFilterRecent">Last 7 dd.</button>
+        <button class="locator-filter-btn filter-orange active" data-bucket="month" id="locatorFilterMonth">Last 30 dd.</button>
+        <button class="locator-filter-btn filter-blue active" data-bucket="older" id="locatorFilterOlder">Older</button>
+      </div>
+
+      <div class="locator-list" id="locatorList">
+        <div class="legend-empty">Зареждане…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FIRE DANGER CHART PANEL ===================== -->
+  <div class="fire-chart-panel" id="fireChartPanel">
+    <div class="fire-chart-header">
+      <span class="fire-chart-header-title"><i class="fa-solid fa-chart-simple"></i> Fire danger chart</span>
+      <button id="fireChartCloseBtn" aria-label="Затвори"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fire-chart-topinfo">
+      <div class="fire-chart-coord" id="fireChartCoord">Coordinate: [—, —]</div>
+      <div class="locator-field-row">
+        <label for="fireChartSource">Source:</label>
+        <select id="fireChartSource">
+          <option>ECMWF (8 km res.)</option>
+          <option>Meteo France (10 km res.)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fire-chart-body" id="fireChartBody"></div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  // ---------- Base map, locked to Bulgaria ----------
+  const bulgariaBounds = L.latLngBounds(
+    [41.20, 22.30], // SW
+    [44.25, 28.65]  // NE
+  );
+
+  const map = L.map('map', {
+    zoomControl: false,
+    attributionControl: true,
+    maxBoundsViscosity: 1.0
+  });
+
+  // ---------- Два вида базова карта: сателит (по подразбиране) и светла ----------
+  // Всеки тип е разделен на "земя" (zIndex:0, най-отдолу) и "граници/надписи" (zIndex:650,
+  // винаги НАД всички data overlay слоеве - Map Options, Forecasts и т.н.), за ориентация.
+  const lightGround = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+    zIndex: 0
+  });
+  const lightLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 19,
+    zIndex: 650
+  });
+  const lightBase = L.layerGroup([lightGround, lightLabels]);
+
+  const satelliteImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+    maxZoom: 19,
+    zIndex: 0
+  });
+  const satelliteLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    zIndex: 650
+  });
+  const satelliteBase = L.layerGroup([satelliteImagery, satelliteLabels]);
+
+  let currentBaseType = 'satellite';
+  satelliteBase.addTo(map); // сателитната карта е по подразбиране
+
+  function setBaseMap(type){
+    if (type === currentBaseType) return;
+    if (type === 'satellite') {
+      map.removeLayer(lightBase);
+      satelliteBase.addTo(map);
+    } else {
+      map.removeLayer(satelliteBase);
+      lightBase.addTo(map);
+    }
+    currentBaseType = type;
+  }
+
+  document.getElementById('toolLayers').addEventListener('click', function(){
+    setBaseMap(currentBaseType === 'satellite' ? 'light' : 'satellite');
+    this.classList.toggle('active-tool', currentBaseType === 'light');
+  });
+
+  // ---------- Тема: лилаво с черно (по подразбиране) / оранжево с бяло ----------
+  document.getElementById('toolTheme').addEventListener('click', function(){
+    const isOrange = document.body.classList.toggle('theme-orange');
+    this.classList.toggle('active-tool', isOrange);
+  });
+
+  map.fitBounds(bulgariaBounds);
+  map.setMinZoom(map.getZoom());   // не позволява да се отдалечи извън страната
+  map.setMaxZoom(16);
+  map.setMaxBounds(bulgariaBounds.pad(0.15)); // твърд лок с малко luft при панориране
+
+  function goHome(){ map.fitBounds(bulgariaBounds); }
+
+  // Километрово ориентирче долу вляво (само метрична система, без мили)
+  L.control.scale({ position: 'bottomleft', imperial: false, maxWidth: 120 }).addTo(map);
+
+  // ---------- Right toolbar: generic map controls only ----------
+  document.getElementById('toolZoomIn').addEventListener('click', () => map.zoomIn());
+  document.getElementById('toolZoomOut').addEventListener('click', () => map.zoomOut());
+  document.getElementById('toolHome').addEventListener('click', goHome);
+  document.getElementById('toolFullscreen').addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.getElementById('app').requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // ---------- Toolbar hover tooltips (small label window, like the reference screenshot) ----------
+  document.querySelectorAll('.map-toolbar button[aria-label]').forEach(btn => {
+    const tip = document.createElement('span');
+    tip.className = 'toolbar-tooltip';
+    tip.textContent = btn.getAttribute('aria-label');
+    btn.appendChild(tip);
+  });
+
+  // ---------- Hamburger: show/hide the rest of the toolbar ----------
+  const toolMenuBtn = document.getElementById('toolMenu');
+  const toolbarEl = document.querySelector('.map-toolbar');
+  toolMenuBtn.addEventListener('click', () => {
+    toolbarEl.classList.toggle('collapsed');
+  });
+
+  // ---------- Collapsible sidebar panels (Map Options / Forecasts / Rapid Damage Assessment) ----------
+  // Accordion: само едно поле може да е спуснато наведнъж - отваряне на друго затваря първото.
+  const accordionPanels = [];
+
+  document.querySelectorAll('.panel-header').forEach(header => {
+    const body = header.nextElementSibling;
+    if (!body || !body.classList.contains('panel-body')) return;
+
+    const chevron = document.createElement('i');
+    chevron.className = 'fa-solid fa-chevron-down panel-chevron';
+    header.appendChild(chevron);
+    header.setAttribute('role', 'button');
+    header.setAttribute('tabindex', '0');
+
+    // стартова височина = реалното съдържание, за да тръгва анимацията от нея
+    body.style.maxHeight = body.scrollHeight + 'px';
+
+    accordionPanels.push({ header, body });
+  });
+
+  function collapseAccordionPanel(panel){
+    panel.body.classList.add('collapsed');
+    panel.header.classList.add('collapsed');
+    panel.body.style.maxHeight = '0px';
+  }
+
+  function expandAccordionPanel(panel){
+    panel.body.classList.remove('collapsed');
+    panel.header.classList.remove('collapsed');
+
+    // Свободно място = височина на прозореца минус трите headers (отворен + 2 затворени с margin)
+    // минус luft долу, за да не покрива km ориентирчето на картата.
+    const chromeHeight = 40 * accordionPanels.length + 6 * (accordionPanels.length - 1);
+    const bottomMargin = 90;
+    const available = window.innerHeight - chromeHeight - bottomMargin;
+
+    const target = Math.min(panel.body.scrollHeight, Math.max(available, 150));
+    panel.body.style.maxHeight = target + 'px';
+  }
+
+  accordionPanels.forEach(panel => {
+    function togglePanel(){
+      const isCollapsed = panel.body.classList.contains('collapsed');
+      if (isCollapsed) {
+        accordionPanels.forEach(p => { if (p !== panel) collapseAccordionPanel(p); });
+        expandAccordionPanel(panel);
+      } else {
+        collapseAccordionPanel(panel);
+      }
+    }
+
+    panel.header.addEventListener('click', togglePanel);
+    panel.header.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePanel();
+      }
+    });
+  });
+
+  // Начално състояние: и трите полета са затворени
+  accordionPanels.forEach(panel => collapseAccordionPanel(panel));
+
+  // При преоразмеряване на прозореца - преизчислява таванa на текущо отвореното поле (ако има)
+  window.addEventListener('resize', () => {
+    const openPanel = accordionPanels.find(p => !p.body.classList.contains('collapsed'));
+    if (openPanel) expandAccordionPanel(openPanel);
+  });
+
+  // ---------- Zoom to area: drag a rectangle on the map, then zoom to it ----------
+  const zoomAreaBtn = document.getElementById('toolZoomArea');
+  let zoomAreaActive = false;
+  let zoomAreaStart = null;
+  let zoomAreaBox = null;
+
+  function updateZoomAreaBox(p1, p2){
+    const x = Math.min(p1.x, p2.x);
+    const y = Math.min(p1.y, p2.y);
+    zoomAreaBox.style.left = x + 'px';
+    zoomAreaBox.style.top = y + 'px';
+    zoomAreaBox.style.width = Math.abs(p2.x - p1.x) + 'px';
+    zoomAreaBox.style.height = Math.abs(p2.y - p1.y) + 'px';
+  }
+
+  function onZoomAreaMouseMove(e){
+    updateZoomAreaBox(zoomAreaStart, e.containerPoint);
+  }
+
+  function onZoomAreaMouseUp(e){
+    const endPoint = e.containerPoint;
+    map.off('mousemove', onZoomAreaMouseMove);
+    map.off('mouseup', onZoomAreaMouseUp);
+
+    const pixelWidth = Math.abs(endPoint.x - zoomAreaStart.x);
+    const pixelHeight = Math.abs(endPoint.y - zoomAreaStart.y);
+
+    if (zoomAreaBox) { zoomAreaBox.remove(); zoomAreaBox = null; }
+
+    // Игнорира обикновено кликване (без реално изтеглено правоъгълниче)
+    if (pixelWidth > 8 && pixelHeight > 8) {
+      const bounds = L.latLngBounds(
+        map.containerPointToLatLng(zoomAreaStart),
+        map.containerPointToLatLng(endPoint)
+      );
+      map.fitBounds(bounds);
+    }
+
+    stopZoomAreaMode();
+  }
+
+  function onZoomAreaMouseDown(e){
+    zoomAreaStart = e.containerPoint;
+    zoomAreaBox = L.DomUtil.create('div', 'zoom-area-box', map.getContainer());
+    updateZoomAreaBox(zoomAreaStart, zoomAreaStart);
+    map.on('mousemove', onZoomAreaMouseMove);
+    map.on('mouseup', onZoomAreaMouseUp);
+  }
+
+  function startZoomAreaMode(){
+    zoomAreaActive = true;
+    zoomAreaBtn.classList.add('active-tool');
+    map.dragging.disable();
+    map.getContainer().style.cursor = 'crosshair';
+    map.on('mousedown', onZoomAreaMouseDown);
+  }
+
+  function stopZoomAreaMode(){
+    zoomAreaActive = false;
+    zoomAreaBtn.classList.remove('active-tool');
+    map.dragging.enable();
+    map.getContainer().style.cursor = '';
+    map.off('mousedown', onZoomAreaMouseDown);
+    map.off('mousemove', onZoomAreaMouseMove);
+    map.off('mouseup', onZoomAreaMouseUp);
+    if (zoomAreaBox) { zoomAreaBox.remove(); zoomAreaBox = null; }
+  }
+
+  zoomAreaBtn.addEventListener('click', () => {
+    if (zoomAreaActive) stopZoomAreaMode();
+    else startZoomAreaMode();
+  });
+
+  // ---------- Locate current position ----------
+  const locateBtn = document.getElementById('toolLocation');
+  let userLocationMarker = null;
+
+  locateBtn.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      alert('Геолокацията не се поддържа от този браузър.');
+      return;
+    }
+    locateBtn.classList.add('active-tool');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        locateBtn.classList.remove('active-tool');
+        const latlng = [pos.coords.latitude, pos.coords.longitude];
+
+        if (userLocationMarker) map.removeLayer(userLocationMarker);
+        userLocationMarker = L.circleMarker(latlng, {
+          radius: 8,
+          weight: 3,
+          color: '#fff',
+          fillColor: '#2e7bf2',
+          fillOpacity: 1
+        }).addTo(map);
+
+        map.setView(latlng, Math.max(map.getZoom(), 11));
+      },
+      (err) => {
+        locateBtn.classList.remove('active-tool');
+        alert('Не успяхме да определим локацията ти: ' + err.message);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  // ---------- Map Options: WMS layers (EFFIS / EEA / DLR), single-select ----------
+  const EFFIS_GWIS_WMS = 'https://maps.effis.emergency.copernicus.eu/gwis';
+  const EFFIS_MAIN_WMS = 'https://maps.effis.emergency.copernicus.eu/effis';
+
+  function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  const noteEl = document.getElementById('mapOptionNote');
+  function setNote(text, isWarning){
+    noteEl.textContent = text || '';
+    noteEl.classList.toggle('warning', !!isWarning);
+  }
+
+  // Общи performance настройки за всички WMS слоеве:
+  // (по-рано тук имаше 512px плочки + zoomOffset за по-малко заявки, но се оказа рисковано за
+  // разпръснати точкови/полигонни данни - махнато в полза на коректност пред скорост)
+  // - updateWhenIdle -> не бомбардира сървъра с заявки докато плъзгаш картата, чака да спреш
+  // - updateWhenZooming:false -> не иска нови плочки по време на zoom анимацията
+  // - bounds -> никога не иска плочки извън България
+  const PERF_OPTS = {
+    updateWhenIdle: true,
+    updateWhenZooming: false,
+    keepBuffer: 1,
+    bounds: bulgariaBounds.pad(0.2)
+  };
+
+  function isRdaKey(key){
+    return key === 'modisActive' || key === 'viirsActive' || key === 'modisBurnt' || key === 'nrtBurnt';
+  }
+
+  function createWmsLayer(key, url, wmsOptions){
+    const layer = L.tileLayer.wms(url, Object.assign({}, PERF_OPTS, wmsOptions));
+    const statusEl = () => document.getElementById('status' + capitalize(key));
+    layer.on('loading', () => {
+      const el = statusEl();
+      if (el) el.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+    });
+    layer.on('load', () => {
+      const el = statusEl();
+      if (el) el.innerHTML = '<i class="fa-solid fa-check" style="color:#2e9e3f;"></i>';
+    });
+    layer.on('tileerror', () => {
+      const el = statusEl();
+      if (el) el.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#c0392b;"></i>';
+      const msg = 'Слоят не се зареди – възможно е WMS адресът да се е променил или сървърът да е временно недостъпен.';
+      if (isRdaKey(key) && typeof setRdaNote === 'function') setRdaNote(msg, true);
+      else setNote(msg, true);
+    });
+    return layer;
+  }
+
+  const mapOptionDefs = {
+    settlement: {
+      // ПОТВЪРДЕНО от реален пример: ghsl живее на /gwis, без нужда от TIME параметър.
+      layer: createWmsLayer('settlement', EFFIS_GWIS_WMS, {
+        layers: 'ghsl',
+        format: 'image/png',
+        transparent: true,
+        singletile: false,
+        version: '1.1.1',
+        attribution: 'EFFIS Global Human Settlement Layer &copy; Copernicus EMS'
+      }),
+      note: null
+    },
+    protected: {
+      layer: createWmsLayer('protected', EFFIS_GWIS_WMS, {
+        layers: 'wdpa.poly',
+        format: 'image/png',
+        transparent: true,
+        version: '1.1.1',
+        attribution: 'EFFIS / WDPA &copy; Copernicus EMS'
+      }),
+      note: null
+    },
+    clc: {
+      layer: createWmsLayer('clc', EFFIS_GWIS_WMS, {
+        layers: 'effis_clc_2020',
+        format: 'image/png',
+        transparent: true,
+        version: '1.1.1',
+        map: '/mnt/nfs/mapfiles/effis.clc.map',
+        attribution: 'EFFIS Corine Land Cover 2020 &copy; Copernicus EMS'
+      }),
+      note: null
+    },
+    fuels: {
+      // ПОТВЪРДЕНО от реален пример: fuel_map живее на /effis и иска TIME диапазон (вчера/днес),
+      // както другите "текущи" слоеве. isoDate() е дефинирана по-долу в скрипта, но е hoisted.
+      layer: createWmsLayer('fuels', EFFIS_MAIN_WMS, {
+        layers: 'fuel_map',
+        format: 'image/png',
+        transparent: true,
+        singletile: false,
+        version: '1.1.1',
+        time: (function(){
+          const to = new Date();
+          const from = new Date();
+          from.setDate(from.getDate() - 1);
+          return `${isoDate(from)}/${isoDate(to)}`;
+        })(),
+        attribution: 'EFFIS Fuel Map &copy; Copernicus EMS'
+      }),
+      note: null
+    }
+  };
+
+  const activeMapOptionKeys = new Set();
+
+  // Обща цветова схема (Low -> Very Extreme, плюс "No data" за някои NFDRS индекси)
+  const FD_COLORS = {
+    noData: '#e8e8e8',
+    low: '#7ce38b',
+    moderate: '#c5de4a',
+    high: '#f2b705',
+    veryHigh: '#e8720c',
+    extreme: '#d32f2f',
+    veryExtreme: '#5c1a1a'
+  };
+  function fdEntries(ranges, hasNoData){
+    const keys = ['low','moderate','high','veryHigh','extreme','veryExtreme'];
+    const entries = hasNoData ? [{ color: FD_COLORS.noData, label: 'No data' }] : [];
+    ranges.forEach((label, i) => entries.push({ color: FD_COLORS[keys[i]], label }));
+    return entries;
+  }
+
+  const FIRE_DANGER_LEGEND_ENTRIES = {
+    'Fire Weather index (FWI)': fdEntries(['Low (< 11.2)','Moderate (11.2 - 21.3)','High (21.3 - 38.0)','Very High (38.0 - 50.0)','Extreme (50.0 - 70.0)','Very Extreme (> 70.0)']),
+    'Initial Spread Index (ISI)': fdEntries(['Low (< 3.2)','Moderate (3.2 - 5.0)','High (5.0 - 7.5)','Very High (7.5 - 13.4)','Extreme (13.4 - 26.8)','Very Extreme (> 26.8)']),
+    'Built Up Index (BUI)': fdEntries(['Low (< 24.2)','Moderate (24.2 - 40.7)','High (40.7 - 73.3)','Very High (73.3 - 133.1)','Extreme (133.1 - 193.1)','Very Extreme (> 193.1)']),
+    'Fine Fuel Moisture Code (FFMC)': fdEntries(['Low (< 82.7)','Moderate (82.7 - 86.1)','High (86.1 - 89.2)','Very High (89.2 - 93.0)','Extreme (93.0 - 96.0)','Very Extreme (> 96.0)']),
+    'Duff Moisture Code (DMC)': fdEntries(['Low (< 15.7)','Moderate (15.7 - 27.9)','High (27.9 - 53.1)','Very High (53.1 - 83.6)','Extreme (83.6 - 160.7)','Very Extreme (> 160.7)']),
+    'Drought Code (DC)': fdEntries(['Low (< 256.1)','Moderate (256.1 - 334.1)','High (334.1 - 450.6)','Very High (450.6 - 600.0)','Extreme (600.0 - 749.4)','Very Extreme (> 749.4)']),
+    'Anomaly': fdEntries(['Low (<= 0.0)','Moderate (0.0 - 0.5)','High (0.5 - 1.0)','Very High (1.0 - 1.5)','Extreme (1.5 - 2.5)','Very Extreme (> 2.5)']),
+    'Ranking': fdEntries(['Low (<= 80.0)','Moderate (80.0 - 90.0)','High (90.0 - 95.0)','Very High (95.0 - 98.0)','Extreme (98.0 - 99.0)','Very Extreme (99.0 - 101)']),
+    'KBDI - Keetch-Byron Drought Index': fdEntries(['Low (< 11.2)','Moderate (11.2 - 21.3)','High (21.3 - 38.0)','Very High (38.0 - 50.0)','Extreme (50.0 - 70.0)','Very Extreme (> 70.0)']),
+    'MARK-5 - Drought Factor (MARK-5 DF)': fdEntries(['Low (0.0 - 7.88)','Moderate (5.64 - 16.66)','High (5.70 - 6.31)','Very High (6.31 - 41.65)','Extreme (7.84 - 10.00)','Very Extreme (> 10.00)']),
+    'MARK-5 - Rate of Spread (MARK-5 ROS)': fdEntries(['Low (0.0 - 0.028)','Moderate (0.028 - 0.043)','High (0.043 - 0.066)','Very High (0.066 - 0.115)','Extreme (0.115 - 0.158)','Very Extreme (> 0.158)']),
+    'MARK-5 - Fire Danger Index (MARK-5 FDI)': fdEntries(['Low (0.0 - 2.50)','Moderate (2.50 - 4.37)','High (4.37 - 7.08)','Very High (7.08 - 12.88)','Extreme (12.88 - 17.75)','Very Extreme (> 17.75)']),
+    'NFDRS - Rate of Spread (NFDRS ROS)': fdEntries(['Low (0.0 - 0.15)','Moderate (0.15 - 0.45)','High (0.45 - 0.85)','Very High (0.85 - 1.57)','Extreme (1.57 - 2.20)','Very Extreme (> 2.20)']),
+    'NFDRS - Spread Component (NFDRS SC)': fdEntries(['Low (0.0 - 1.0)','Moderate (1.0 - 2.0)','High (2.0 - 3.0)','Very High (3.0 - 4.0)','Extreme (4.0 - 5.0)','Very Extreme (> 5.0)'], true),
+    'NFDRS - Energy Release Component (NFDRS ERC)': fdEntries(['Low (0.0 - 1.0)','Moderate (1.0 - 2.0)','High (2.0 - 4.0)','Very High (4.0 - 6.0)','Extreme (6.0 - 8.0)','Very Extreme (> 8.0)'], true),
+    'NFDRS - Burning Index (NFDRS BI)': fdEntries(['Low (0.0 - 1.0)','Moderate (1.0 - 3.0)','High (3.0 - 7.0)','Very High (7.0 - 12.0)','Extreme (12.0 - 18.0)','Very Extreme (> 18.0)'], true),
+    'NFDRS - Ignition Probability (NFDRS IC)': fdEntries(['Low (0.0 - 2.0)','Moderate (2.0 - 5.0)','High (5.0 - 8.0)','Very High (8.0 - 12.0)','Extreme (12.0 - 16.0)','Very Extreme (> 16.0)'], true)
+  };
+
+  const LEGEND_DATA = {
+    settlement: {
+      title: 'Human Settlement Layer',
+      entries: [
+        { color: '#8e5fd6', label: 'Built up' }
+      ]
+    },
+    protected: {
+      title: 'Protected Areas Layer',
+      entries: [
+        { color: '#4caf50', label: 'Land Protected Areas' },
+        { color: '#26a69a', label: 'Coastal Protected Areas' },
+        { color: '#7e57c2', label: 'Marine Protected Areas' }
+      ]
+    },
+    clc: {
+      title: 'Corine Landcover',
+      entries: [
+        { color: '#000000', label: 'Artificial Surfaces' },
+        { color: '#ffff00', label: 'Agriculture' },
+        { color: '#2e7d32', label: 'Broad Leaved Forest' },
+        { color: '#388e3c', label: 'Coniferous Forest' },
+        { color: '#43a047', label: 'Mixed Forest' },
+        { color: '#66bb6a', label: 'Other Natural Land' },
+        { color: '#81c784', label: 'Sclerophyllous Vegetation' },
+        { color: '#a5e8a0', label: 'Transitional Vegetation' },
+        { color: '#4dd0e1', label: 'Other Land Cover' }
+      ]
+    },
+    fuels: {
+      title: 'FUELS',
+      entries: [
+        { color: '#8bc34a', label: 'Short Grass' },
+        { color: '#689f38', label: 'Grass and understory' },
+        { color: '#33691e', label: 'Tall Grass' },
+        { color: '#cddc39', label: 'Chaparral' },
+        { color: '#ffeb3b', label: 'Brush' },
+        { color: '#ffb300', label: 'Dormant brush' },
+        { color: '#ff7043', label: 'Southern rough' },
+        { color: '#c19a6b', label: 'Closed timber litter' },
+        { color: '#8d6e63', label: 'Hardwood litter' },
+        { color: '#5d3a1a', label: 'Timber' }
+      ]
+    },
+    fireDanger: {
+      title: () => {
+        const el = document.getElementById('forecastIndex');
+        return el ? el.value : 'Fire Weather index (FWI)';
+      },
+      entries: () => {
+        const el = document.getElementById('forecastIndex');
+        const idx = el ? el.value : 'Fire Weather index (FWI)';
+        return FIRE_DANGER_LEGEND_ENTRIES[idx] || FIRE_DANGER_LEGEND_ENTRIES['Fire Weather index (FWI)'];
+      }
+    },
+    lightning: {
+      title: 'Lightening Forecast',
+      entries: [
+        { color: '#8bd97e', label: 'Very Low Lightning (0.25 - 1.0)' },
+        { color: '#fff176', label: 'Low Lightning (1.0 - 1.5)' },
+        { color: '#ff9800', label: 'Moderate Lightning (1.5 - 2.5)' },
+        { color: '#e64a19', label: 'High Lightning (2.5 - 5.0)' },
+        { color: '#8b0000', label: 'Very High Lightning (5.0 - 15.0)' },
+        { color: '#3d0000', label: 'Extreme Lightning (>= 15)' }
+      ]
+    },
+    modisActive: {
+      title: 'MODIS',
+      entries: [
+        { color: '#e91e8c', label: '<=6 hours (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#f4a6c8', label: '>6 & <=12 hours (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#e53935', label: '>12 & <=24 hours (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#fb8c00', label: 'Last 7 Days (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#1e88e5', label: 'Last 30 Days (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#43a047', label: 'Fire Season (MODIS Aqua)', shape: 'triangle-down' },
+        { color: '#8e24aa', label: '<=6 hours (MODIS Terra)', shape: 'triangle-up' },
+        { color: '#f4a6c8', label: '>6 & <=12 hours (MODIS Terra)', shape: 'triangle-up' },
+        { color: '#e53935', label: '>12 & <=24 hours (MODIS Terra)', shape: 'triangle-up' },
+        { color: '#fb8c00', label: 'Last 7 Days (MODIS Terra)', shape: 'triangle-up' },
+        { color: '#1e88e5', label: 'Last 30 Days (MODIS Terra)', shape: 'triangle-up' },
+        { color: '#43a047', label: 'Fire Season (MODIS Terra)', shape: 'triangle-up' }
+      ]
+    },
+    viirsActive: {
+      title: () => {
+        const el = document.getElementById('viirsSourceSelect');
+        return el ? el.value : 'VIIRS';
+      },
+      entries: () => {
+        const tiers = [
+          { color: '#9c27b0', suffix: '<=6 hours' },
+          { color: '#f4a6c8', suffix: '>6 & <=12 hours' },
+          { color: '#e53935', suffix: '>12 & <=24 hours' },
+          { color: '#fb8c00', suffix: 'Last 7 Days' },
+          { color: '#1e88e5', suffix: 'Last 30 Days' },
+          { color: '#43a047', suffix: 'Fire Season' }
+        ];
+        const val = document.getElementById('viirsSourceSelect').value;
+        let satellites;
+        if (val.indexOf('NOAA') !== -1) satellites = ['Noaa-20'];
+        else if (val.indexOf('Suomi') !== -1) satellites = ['Suomi'];
+        else satellites = ['Suomi', 'Noaa-20', 'Noaa21']; // "VIIRS (all)"
+        const entries = [];
+        satellites.forEach(sat => {
+          tiers.forEach(t => entries.push({ color: t.color, label: `${t.suffix} (VIIRS ${sat})` }));
+        });
+        return entries;
+      }
+    },
+    modisBurnt: {
+      title: 'MODIS/SENTINEL2 (supervised)',
+      entries: [
+        { color: '#e53935', label: 'Last 1 Day', shape: 'square' },
+        { color: '#fb8c00', label: 'Last 7 Days', shape: 'square' },
+        { color: '#1e88e5', label: 'Last 30 Days', shape: 'square' },
+        { color: '#43a047', label: 'Fire Season', shape: 'square' },
+        { color: '#7b1a1a', label: 'Last 1 Day', shape: 'rect' },
+        { color: '#a06a1a', label: 'Last 7 Days', shape: 'rect' },
+        { color: '#26a69a', label: 'Last 30 Days', shape: 'rect' },
+        { color: '#4caf50', label: 'Fire Season', shape: 'rect' }
+      ]
+    }
+  };
+
+  function renderSwatch(entry){
+    const shape = entry.shape || 'square';
+    if (shape === 'triangle-down') return `<span class="legend-swatch shape-triangle-down" style="border-top-color:${entry.color}"></span>`;
+    if (shape === 'triangle-up') return `<span class="legend-swatch shape-triangle-up" style="border-bottom-color:${entry.color}"></span>`;
+    if (shape === 'diamond') return `<span class="legend-swatch shape-diamond" style="background:${entry.color}"></span>`;
+    if (shape === 'rect') return `<span class="legend-swatch shape-rect" style="background:${entry.color}"></span>`;
+    return `<span class="legend-swatch" style="background:${entry.color}"></span>`;
+  }
+
+  const legendPanel = document.getElementById('legendPanel');
+  const legendBody = document.getElementById('legendBody');
+
+  function updateLegend(){
+    const activeKeys = [];
+    activeMapOptionKeys.forEach(k => activeKeys.push(k));
+    if (typeof rdaActiveLayers !== 'undefined') {
+      Object.keys(rdaActiveLayers).forEach(k => activeKeys.push(k));
+    }
+    const fireDangerChk = document.getElementById('fireDangerToggle');
+    if (fireDangerChk && fireDangerChk.checked) activeKeys.push('fireDanger');
+    const lightningChk = document.getElementById('lightningToggle');
+    if (lightningChk && lightningChk.checked) activeKeys.push('lightning');
+
+    if (activeKeys.length === 0) {
+      legendBody.innerHTML = '<div class="legend-empty">No layer selected</div>';
+      return;
+    }
+    legendBody.innerHTML = activeKeys.map(key => {
+      const data = LEGEND_DATA[key];
+      if (!data) return '';
+      const title = typeof data.title === 'function' ? data.title() : data.title;
+      const entries = typeof data.entries === 'function' ? data.entries() : data.entries;
+      const rows = entries.map(e => `<div class="legend-row">${renderSwatch(e)}<span>${e.label}</span></div>`).join('');
+      return `<div class="legend-section"><div class="legend-section-title">${title}</div>${rows}</div>`;
+    }).join('');
+  }
+
+  document.getElementById('toolList').addEventListener('click', function(){
+    legendPanel.classList.toggle('open');
+    this.classList.toggle('active-tool', legendPanel.classList.contains('open'));
+  });
+  document.getElementById('legendCloseBtn').addEventListener('click', () => {
+    legendPanel.classList.remove('open');
+    document.getElementById('toolList').classList.remove('active-tool');
+  });
+
+  document.querySelectorAll('.map-option-check').forEach(chk => {
+    chk.addEventListener('change', function(){
+      const key = this.dataset.layer;
+      const def = mapOptionDefs[key];
+
+      if (this.checked) {
+        if (!def.layer) {
+          // Слой без наличен източник на данни
+          this.checked = false;
+          setNote(def.note, true);
+          return;
+        }
+        activeMapOptionKeys.add(key);
+        def.layer.addTo(map);
+        if (def.note) setNote(def.note, false);
+      } else {
+        activeMapOptionKeys.delete(key);
+        if (def.layer && map.hasLayer(def.layer)) map.removeLayer(def.layer);
+        const statusEl = document.getElementById('status' + capitalize(key));
+        if (statusEl) statusEl.innerHTML = '';
+      }
+      updateLegend();
+    });
+  });
+
+  // ---------- Forecasts: FIRE DANGER FORECAST, независим toggle от Map Options ----------
+  // ПОТВЪРДЕНО от реални примери: ECMWF живее на /gwis, Meteo France на /effis.
+  const FORECAST_SOURCE_URLS = {
+    'ECMWF (8 km res.)': 'https://maps.effis.emergency.copernicus.eu/gwis',
+    'Meteo France (10 km res.)': 'https://maps.effis.emergency.copernicus.eu/effis'
+  };
+
+  // Индекс -> име на слой, отделно за всеки Source (потвърдени примерни адреси за ECMWF;
+  // mf010.* потвърдени по-рано през GetCapabilities на /effis)
+  const INDEX_LAYER_MAP = {
+    'ECMWF (8 km res.)': {
+      'Fire Weather index (FWI)': 'ecmwf.fwi',
+      'Initial Spread Index (ISI)': 'ecmwf.isi',
+      'Built Up Index (BUI)': 'ecmwf.bui',
+      'Fine Fuel Moisture Code (FFMC)': 'ecmwf.ffmc',
+      'Duff Moisture Code (DMC)': 'ecmwf.dmc',
+      'Drought Code (DC)': 'ecmwf.dc',
+      'Anomaly': 'ecmwf.anomaly',
+      'Ranking': 'ecmwf.ranking',
+      'KBDI - Keetch-Byron Drought Index': 'ecmwf.mark5.kbdi',
+      'MARK-5 - Drought Factor (MARK-5 DF)': 'ecmwf.mark5.df',
+      'MARK-5 - Rate of Spread (MARK-5 ROS)': 'ecmwf.mark5.ros',
+      'MARK-5 - Fire Danger Index (MARK-5 FDI)': 'ecmwf.mark5.fdi',
+      'NFDRS - Rate of Spread (NFDRS ROS)': 'ecmwf.nfdrs.ros',
+      'NFDRS - Spread Component (NFDRS SC)': 'ecmwf.nfdrs.sc',
+      'NFDRS - Energy Release Component (NFDRS ERC)': 'ecmwf.nfdrs.erc',
+      'NFDRS - Burning Index (NFDRS BI)': 'ecmwf.nfdrs.bi',
+      'NFDRS - Ignition Probability (NFDRS IC)': 'ecmwf.nfdrs.ic'
+    },
+    'Meteo France (10 km res.)': {
+      'Fire Weather index (FWI)': 'mf010.fwi',
+      'Initial Spread Index (ISI)': 'mf010.isi',
+      'Built Up Index (BUI)': 'mf010.bui',
+      'Fine Fuel Moisture Code (FFMC)': 'mf010.ffmc',
+      'Duff Moisture Code (DMC)': 'mf010.dmc',
+      'Drought Code (DC)': 'mf010.dc',
+      'Anomaly': 'mf010.anomaly',
+      'Ranking': 'mf010.ranking'
+    }
+  };
+
+  // ---------- Index dropdown: опциите зависят от избрания Source ----------
+  const INDEX_OPTIONS_COMMON = [
+    'Fire Weather index (FWI)',
+    'Initial Spread Index (ISI)',
+    'Built Up Index (BUI)',
+    'Fine Fuel Moisture Code (FFMC)',
+    'Duff Moisture Code (DMC)',
+    'Drought Code (DC)',
+    'Anomaly',
+    'Ranking'
+  ];
+  const INDEX_OPTIONS_ECMWF_EXTRA = [
+    'KBDI - Keetch-Byron Drought Index',
+    'MARK-5 - Drought Factor (MARK-5 DF)',
+    'MARK-5 - Rate of Spread (MARK-5 ROS)',
+    'MARK-5 - Fire Danger Index (MARK-5 FDI)',
+    'NFDRS - Rate of Spread (NFDRS ROS)',
+    'NFDRS - Spread Component (NFDRS SC)',
+    'NFDRS - Energy Release Component (NFDRS ERC)',
+    'NFDRS - Burning Index (NFDRS BI)',
+    'NFDRS - Ignition Probability (NFDRS IC)'
+  ];
+
+  function populateIndexOptions(){
+    const sourceLabel = document.getElementById('forecastSource').value;
+    const indexSelect = document.getElementById('forecastIndex');
+    const prevValue = indexSelect.value;
+
+    const options = sourceLabel === 'ECMWF (8 km res.)'
+      ? INDEX_OPTIONS_COMMON.concat(INDEX_OPTIONS_ECMWF_EXTRA)
+      : INDEX_OPTIONS_COMMON.slice();
+
+    indexSelect.innerHTML = options.map(o => `<option>${o}</option>`).join('');
+    // пази избора, ако новият списък пак го съдържа, иначе се връща на FWI по подразбиране
+    indexSelect.value = options.includes(prevValue) ? prevValue : options[0];
+  }
+  populateIndexOptions();
+  document.getElementById('forecastSource').addEventListener('change', populateIndexOptions);
+
+  function todayISO(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  const MONTHS_BG_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // Избраната дата за прогнозата - по подразбиране днес, но може да се мести и назад (изминали дни)
+  let selectedForecastDate = new Date();
+  selectedForecastDate.setHours(0, 0, 0, 0);
+
+  function setForecastDateDisplay(d){
+    const el = document.getElementById('forecastDateDisplay');
+    if (el) el.textContent = `${String(d.getDate()).padStart(2,'0')} ${MONTHS_BG_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  setForecastDateDisplay(selectedForecastDate);
+
+  let fireDangerLayer = null;
+
+  function buildFireDangerLayer(){
+    const sourceLabel = document.getElementById('forecastSource').value;
+    const indexLabel = document.getElementById('forecastIndex').value;
+
+    const url = FORECAST_SOURCE_URLS[sourceLabel] || FORECAST_SOURCE_URLS['ECMWF (8 km res.)'];
+    const layerMap = INDEX_LAYER_MAP[sourceLabel] || INDEX_LAYER_MAP['ECMWF (8 km res.)'];
+    const layerName = layerMap[indexLabel] || layerMap['Fire Weather index (FWI)'];
+
+    const wmsOptions = {
+      layers: layerName,
+      format: 'image/png',
+      transparent: true,
+      singletile: false,
+      version: '1.1.1',
+      time: isoDate(selectedForecastDate),
+      attribution: 'EFFIS Fire Danger Forecast &copy; Copernicus EMS / JRC'
+    };
+    return createWmsLayer('fireDanger', url, wmsOptions);
+  }
+
+  function refreshFireDangerLayer(){
+    if (!fireDangerCheckbox.checked) return;
+    if (fireDangerLayer) map.removeLayer(fireDangerLayer);
+    fireDangerLayer = buildFireDangerLayer();
+    fireDangerLayer.addTo(map);
+  }
+
+  const fireDangerCheckbox = document.getElementById('fireDangerToggle');
+
+  fireDangerCheckbox.addEventListener('change', function(){
+    if (this.checked) {
+      fireDangerLayer = buildFireDangerLayer();
+      fireDangerLayer.addTo(map);
+    } else if (fireDangerLayer) {
+      map.removeLayer(fireDangerLayer);
+      fireDangerLayer = null;
+      const statusEl = document.getElementById('statusFireDanger');
+      if (statusEl) statusEl.innerHTML = '';
+    }
+    updateLegend();
+  });
+
+  // Смяна на Source докато слоят е активен -> веднага го пресъздава с новия източник
+  document.getElementById('forecastSource').addEventListener('change', refreshFireDangerLayer);
+  document.getElementById('forecastIndex').addEventListener('change', function(){
+    refreshFireDangerLayer();
+    updateLegend();
+  });
+
+  // ---------- LIGHTNING FORECAST (винаги ECMWF, независим от Source dropdown-а) ----------
+  const LIGHTNING_URL = 'https://maps.effis.emergency.copernicus.eu/gwis';
+  const LIGHTNING_LAYER = 'ecmwf.extra.lightning';
+
+  let lightningLayer = null;
+
+  function buildLightningLayer(){
+    return createWmsLayer('lightning', LIGHTNING_URL, {
+      layers: LIGHTNING_LAYER,
+      format: 'image/png',
+      transparent: true,
+      singletile: false,
+      version: '1.1.1',
+      time: isoDate(selectedForecastDate),
+      attribution: 'EFFIS Lightning Forecast (ECMWF) &copy; Copernicus EMS'
+    });
+  }
+
+  function refreshLightningLayer(){
+    if (!lightningCheckbox.checked) return;
+    if (lightningLayer) map.removeLayer(lightningLayer);
+    lightningLayer = buildLightningLayer();
+    lightningLayer.addTo(map);
+  }
+
+  const lightningCheckbox = document.getElementById('lightningToggle');
+  lightningCheckbox.addEventListener('change', function(){
+    if (this.checked) {
+      lightningLayer = buildLightningLayer();
+      lightningLayer.addTo(map);
+    } else if (lightningLayer) {
+      map.removeLayer(lightningLayer);
+      lightningLayer = null;
+      const statusEl = document.getElementById('statusLightning');
+      if (statusEl) statusEl.innerHTML = '';
+    }
+    updateLegend();
+  });
+
+  // Общ refresh за двата "Forecasts" слоя - викан при всяка промяна на датата от календара
+  function refreshForecastLayers(){
+    refreshFireDangerLayer();
+    refreshLightningLayer();
+  }
+
+  // ---------- Календар за Forecasts: избор на конкретна дата (включително изминали дни) ----------
+  const forecastDateInput = document.getElementById('forecastDateInput');
+  // горна граница = днес + 9 дни (най-дългият познат хоризонт на прогнозата, ECMWF); долна граница - свободна назад
+  (function setForecastDateInputMax(){
+    const maxD = new Date();
+    maxD.setDate(maxD.getDate() + 9);
+    forecastDateInput.max = isoDate(maxD);
+    forecastDateInput.value = isoDate(selectedForecastDate);
+  })();
+
+  document.getElementById('forecastDateBtn').addEventListener('click', () => {
+    if (forecastDateInput.showPicker) forecastDateInput.showPicker();
+    else forecastDateInput.click();
+  });
+
+  forecastDateInput.addEventListener('change', function(){
+    if (!this.value) return;
+    selectedForecastDate = new Date(this.value + 'T00:00:00');
+    setForecastDateDisplay(selectedForecastDate);
+    refreshForecastLayers();
+  });
+
+  function shiftForecastDate(direction){
+    selectedForecastDate.setDate(selectedForecastDate.getDate() + direction);
+    setForecastDateDisplay(selectedForecastDate);
+    forecastDateInput.value = isoDate(selectedForecastDate);
+    refreshForecastLayers();
+  }
+  document.getElementById('forecastPrevBtn').addEventListener('click', () => shiftForecastDate(-1));
+  document.getElementById('forecastNextBtn').addEventListener('click', () => shiftForecastDate(1));
+
+  // ---------- Rapid Damage Assessment: date range + Active Fires / Burnt Areas WMS layers ----------
+  // ПОТВЪРДЕНО от реални примерни адреси от EFFIS "Data and services" страницата:
+  // - Active Fires (MODIS) -> /gwis, layer "modis.hs" (не /effis - там връщаше валидно, но празно изображение)
+  // - Burnt Areas (MODIS)  -> /effis, layer "modis.ba" (просто, без ".poly" наставки)
+  // - "Last 1 day" в реалния пример = TIME диапазон (вчера/днес), не единична дата
+  const RDA_GWIS = 'https://maps.effis.emergency.copernicus.eu/gwis';
+  const RDA_EFFIS = 'https://maps.effis.emergency.copernicus.eu/effis';
+
+  function isoDate(d){
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  function computeRange(mode, refDateStr){
+    const ref = refDateStr ? new Date(refDateStr + 'T00:00:00') : new Date();
+    ref.setHours(0, 0, 0, 0);
+    const to = new Date(ref);
+    let from = new Date(ref);
+    if (mode === '7d') from.setDate(from.getDate() - 7);
+    else if (mode === '30d') from.setDate(from.getDate() - 30);
+    else if (mode === 'season') from = new Date(ref.getFullYear(), 0, 1); // 1 януари текущата година
+    else from.setDate(from.getDate() - 1); // '1d' и 'date' -> (реф-1)/(реф), както в потвърдения пример
+    return { mode, from, to };
+  }
+
+  function timeParamFor(range){
+    return `${isoDate(range.from)}/${isoDate(range.to)}`;
+  }
+
+  function formatDisplayDate(d){
+    return `${String(d.getDate()).padStart(2,'0')} ${MONTHS_BG_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  function updateFromToDisplay(range){
+    const el = document.getElementById('rdaFromTo');
+    if (el) el.innerHTML = `<strong>From:</strong> ${formatDisplayDate(range.from)} &nbsp; <strong>To:</strong> ${formatDisplayDate(range.to)}`;
+  }
+
+  function setRdaNote(text, isWarning){
+    const el = document.getElementById('rdaNote');
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.toggle('warning', !!isWarning);
+  }
+
+  function viirsLayerName(){
+    const val = document.getElementById('viirsSourceSelect').value;
+    if (val.indexOf('NOAA') !== -1) return 'noaa.hs';
+    return 'viirs.hs'; // покрива "VIIRS (all)" и "VIIRS (Suomi NPP)" - няма потвърден отделен слой само за Suomi NPP
+  }
+
+  let currentRange = computeRange('1d');
+  const rdaActiveLayers = {};
+
+  function buildRdaLayer(key){
+    let url, layerName;
+
+    if (key === 'modisActive') { url = RDA_GWIS; layerName = 'modis.hs'; }
+    else if (key === 'viirsActive') { url = RDA_GWIS; layerName = viirsLayerName(); }
+    else if (key === 'modisBurnt') { url = RDA_EFFIS; layerName = 'modis.ba'; }
+    else if (key === 'nrtBurnt') { url = RDA_EFFIS; layerName = 'effis.nrt.ba'; }
+    else return null;
+
+    const wmsOptions = {
+      layers: layerName,
+      format: 'image/png',
+      transparent: true,
+      singletile: false,
+      version: '1.1.1',
+      time: timeParamFor(currentRange),
+      attribution: 'EFFIS Rapid Damage Assessment &copy; Copernicus EMS / JRC'
+    };
+
+    return createWmsLayer(key, url, wmsOptions);
+  }
+
+  function toggleRdaLayer(key, checked){
+    if (rdaActiveLayers[key]) {
+      map.removeLayer(rdaActiveLayers[key]);
+      delete rdaActiveLayers[key];
+    }
+    if (checked) {
+      const layer = buildRdaLayer(key);
+      if (layer) {
+        rdaActiveLayers[key] = layer;
+        layer.addTo(map);
+      }
+    } else {
+      const statusEl = document.getElementById('status' + capitalize(key));
+      if (statusEl) statusEl.innerHTML = '';
+    }
+    updateLegend();
+  }
+
+  function refreshActiveRdaLayers(){
+    Object.keys(rdaActiveLayers).forEach(key => toggleRdaLayer(key, true));
+  }
+
+  function setRange(mode, refDateStr){
+    currentRange = computeRange(mode, refDateStr);
+    updateFromToDisplay(currentRange);
+    refreshActiveRdaLayers();
+  }
+
+  document.getElementById('chkModisActive').addEventListener('change', e => toggleRdaLayer('modisActive', e.target.checked));
+  document.getElementById('chkViirsActive').addEventListener('change', e => toggleRdaLayer('viirsActive', e.target.checked));
+  document.getElementById('viirsSourceSelect').addEventListener('change', () => {
+    if (document.getElementById('chkViirsActive').checked) toggleRdaLayer('viirsActive', true);
+  });
+  document.getElementById('chkModisBurnt').addEventListener('change', e => toggleRdaLayer('modisBurnt', e.target.checked));
+  document.getElementById('chkNrtBurnt').addEventListener('change', e => toggleRdaLayer('nrtBurnt', e.target.checked));
+
+  // FIRE SEVERITY: няма потвърден публичен WMS слой за този продукт - остава изключен (тихо)
+  document.getElementById('chkFireSeverity').addEventListener('change', function(){
+    if (this.checked) {
+      this.checked = false;
+    }
+  });
+
+  // Бутони за бърз диапазон (Last 1/7/30 Days + Fire Season) - единствен избор помежду им
+  const rdaRangeButtons = document.querySelectorAll('.quick-range button, #rdaFireSeasonBtn');
+  rdaRangeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      rdaRangeButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setRange(btn.dataset.range);
+    });
+  });
+
+  // Избор на конкретна дата през календарчето
+  const rdaDateInput = document.getElementById('rdaDateInput');
+  document.getElementById('rdaCalendarBtn').addEventListener('click', () => {
+    if (rdaDateInput.showPicker) rdaDateInput.showPicker();
+    else rdaDateInput.click();
+  });
+  rdaDateInput.addEventListener('change', function(){
+    if (!this.value) return;
+    rdaRangeButtons.forEach(b => b.classList.remove('active'));
+    setRange('date', this.value);
+  });
+
+  // Стрелки < > : местят текущия диапазон напред/назад със същата му дължина
+  // (1 ден -> ден по ден, 7 дни -> цяла седмица, 30 дни -> цял месец, сезон -> цяла година)
+  function rangeLengthDays(mode){
+    if (mode === '7d') return 7;
+    if (mode === '30d') return 30;
+    if (mode === 'season') return 365;
+    return 1; // '1d' и 'date'
+  }
+
+  function shiftRange(direction){
+    const days = rangeLengthDays(currentRange.mode);
+    const newRef = new Date(currentRange.to);
+    newRef.setDate(newRef.getDate() + direction * days);
+    const refStr = isoDate(newRef);
+    setRange(currentRange.mode, refStr);
+    if (currentRange.mode === 'date') rdaDateInput.value = refStr;
+  }
+
+  document.getElementById('rdaPrevBtn').addEventListener('click', () => shiftRange(-1));
+  document.getElementById('rdaNextBtn').addEventListener('click', () => shiftRange(1));
+
+  updateFromToDisplay(currentRange);
+
+  // ---------- Mobile sidebar toggle ----------
+  const sidebar = document.getElementById('sidebar');
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+
+  // ---------- Burnt Area Locator ----------
+  // ВНИМАНИЕ: това е нова, непроверена интеграция - използва WFS (не WMS), за да вземе конкретни
+  // събития (дата/площ/място), а не просто цветно изображение. Потвърден е само типа заявка
+  // (typename=ms:modis.ba.poly), не и точните имена на полетата в отговора, затова кодът пробва
+  // няколко правдоподобни варианта на всяко поле.
+  const BAL_WFS = 'https://maps.effis.emergency.copernicus.eu/effis';
+  const BAL_BULGARIA_BBOX = '22.30,41.20,28.65,44.25'; // ПОТВЪРДЕНО: работи без CRS наставка
+
+  let balFeaturesCache = null;
+  let balHighlightLayer = null; // текущо очертаната изгоряла площ на картата
+
+  function balSeasonStart(){
+    return new Date(new Date().getFullYear(), 0, 1);
+  }
+
+  function balBucketFor(dateObj){
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const diffDays = Math.floor((today - dateObj) / 86400000);
+    if (diffDays <= 7) return 'recent';
+    if (diffDays <= 30) return 'month';
+    return 'older';
+  }
+
+  function balExtract(props, candidates){
+    for (const k of candidates) {
+      if (props[k] !== undefined && props[k] !== null && props[k] !== '') return props[k];
+    }
+    return null;
+  }
+
+  function balParseDate(raw){
+    if (!raw) return null;
+    const d = new Date(raw);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function balCentroid(geometry){
+    try {
+      let coords = geometry.coordinates;
+      while (Array.isArray(coords[0][0])) coords = coords[0];
+      let sx = 0, sy = 0;
+      coords.forEach(c => { sx += c[0]; sy += c[1]; });
+      return [sy / coords.length, sx / coords.length]; // [lat, lng] за Leaflet
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function balFormatDate(d){
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  async function balFetchFeatures(){
+    // ПОТВЪРДЕНО: outputformat="GeoJSON" (главни букви) + bbox без CRS наставка работят коректно.
+    const url = `${BAL_WFS}?service=WFS&version=1.1.0&request=GetFeature&typename=ms:modis.ba.poly&outputformat=GeoJSON&bbox=${BAL_BULGARIA_BBOX}&maxfeatures=5000`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+    let resp;
+    try {
+      resp = await fetch(url, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    return (data.features || []).map(f => {
+      const props = f.properties || {};
+      const dateRaw = balExtract(props, ['FIREDATE','LASTUPDATE','DATE','date','START_DATE','startdate','ACQ_DATE','FDATE']);
+      const areaRaw = balExtract(props, ['AREA_HA','area_ha','AREA','area','HA','ha']);
+      const placeRaw = balExtract(props, ['PLACE','place','COMMUNE','commune','PROVINCE','province','NAME','name']);
+      return {
+        date: balParseDate(dateRaw),
+        area: areaRaw,
+        place: placeRaw,
+        centroid: balCentroid(f.geometry),
+        geometry: f.geometry,
+        raw: props
+      };
+    }).filter(f => f.date && f.centroid && bulgariaBounds.contains(f.centroid));
+  }
+
+  function balPopulateProvinces(){
+    const select = document.getElementById('locatorProvince');
+    const places = new Set();
+    (balFeaturesCache || []).forEach(f => { if (f.place) places.add(f.place); });
+    const options = ['All provinces'].concat(Array.from(places).sort());
+    select.innerHTML = options.map(o => `<option>${o}</option>`).join('');
+  }
+
+  function balRenderList(){
+    const listEl = document.getElementById('locatorList');
+    if (!balFeaturesCache) {
+      listEl.innerHTML = '<div class="legend-empty">Зареждане…</div>';
+      return;
+    }
+    if (balFeaturesCache.length === 0) {
+      listEl.innerHTML = '<div class="legend-empty">Няма регистрирани изгорели площи в текущия сезон.</div>';
+      return;
+    }
+
+    const activeBuckets = new Set();
+    document.querySelectorAll('.locator-filter-btn.active').forEach(b => activeBuckets.add(b.dataset.bucket));
+    const provinceVal = document.getElementById('locatorProvince').value;
+
+    const items = balFeaturesCache
+      .filter(f => activeBuckets.has(balBucketFor(f.date)))
+      .filter(f => provinceVal === 'All provinces' || f.place === provinceVal)
+      .sort((a, b) => b.date - a.date);
+
+    if (items.length === 0) {
+      listEl.innerHTML = '<div class="legend-empty">Няма резултати за избраните филтри.</div>';
+      return;
+    }
+
+    listEl.innerHTML = items.map((f, i) => {
+      const bucket = balBucketFor(f.date);
+      const areaText = f.area != null ? `${Math.round(f.area)}ha` : '?ha';
+      const placeText = f.place ? `${f.place} (BG)` : 'България (BG)';
+      return `<div class="locator-item bucket-${bucket}">
+        <div class="locator-item-text"><strong>${balFormatDate(f.date)} / ${areaText}</strong>${placeText}</div>
+        <div class="locator-item-actions">
+          <button class="bal-zoom-btn" data-idx="${i}" title="Покажи на картата"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+          <button class="bal-info-btn" data-idx="${i}" title="Детайли"><i class="fa-solid fa-chart-simple"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+
+    listEl.querySelectorAll('.bal-zoom-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = items[parseInt(btn.dataset.idx, 10)];
+        if (!f) return;
+
+        if (balHighlightLayer) { map.removeLayer(balHighlightLayer); balHighlightLayer = null; }
+
+        if (f.geometry) {
+          balHighlightLayer = L.geoJSON(f.geometry, {
+            style: { color: '#ff0000', weight: 4, opacity: 1, fillOpacity: 0.08, fillColor: '#ff0000' }
+          }).addTo(map);
+          map.fitBounds(balHighlightLayer.getBounds(), { maxZoom: 14, padding: [40, 40] });
+        } else if (f.centroid) {
+          map.setView(f.centroid, 12);
+        }
+      });
+    });
+    listEl.querySelectorAll('.bal-info-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = items[parseInt(btn.dataset.idx, 10)];
+        if (f) openFireDangerChart(f);
+      });
+    });
+  }
+
+  async function balOpenLocator(){
+    const panel = document.getElementById('locatorPanel');
+    panel.classList.add('open');
+
+    // динамичен таван спрямо реалната височина на прозореца, за да не покрива km ориентирчето
+    const listCap = Math.max(140, window.innerHeight - 420);
+    document.getElementById('locatorList').style.maxHeight = listCap + 'px';
+
+    const from = balSeasonStart();
+    const to = new Date();
+    document.getElementById('locatorDateRange').innerHTML =
+      `<strong>From</strong> ${balFormatDate(from)} <strong>To</strong> ${balFormatDate(to)}`;
+
+    if (balFeaturesCache) { balRenderList(); return; }
+
+    document.getElementById('locatorList').innerHTML = '<div class="legend-empty">Зареждане…</div>';
+    try {
+      const all = await balFetchFeatures();
+      balFeaturesCache = all.filter(f => f.date >= from && f.date <= to);
+      balPopulateProvinces();
+      balRenderList();
+    } catch (err) {
+      const msg = err.name === 'AbortError'
+        ? 'заявката отне твърде дълго време (>25 сек.) и беше прекратена'
+        : err.message;
+      document.getElementById('locatorList').innerHTML =
+        `<div class="legend-empty">Не успяхме да заредим данните (${msg}). EFFIS сървърът може да не позволява директни заявки от браузъра.</div>`;
+    }
+  }
+
+  document.getElementById('burntAreaLocatorBtn').addEventListener('click', balOpenLocator);
+  document.getElementById('locatorCloseBtn').addEventListener('click', () => {
+    document.getElementById('locatorPanel').classList.remove('open');
+  });
+  document.querySelectorAll('.locator-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      balRenderList();
+    });
+  });
+  document.getElementById('locatorProvince').addEventListener('change', balRenderList);
+
+  // ---------- Fire Danger Chart (детайли за конкретна изгоряла площ) ----------
+  // ВНИМАНИЕ: нова, непроверена техника - WMS GetFeatureInfo (стойност в точка), не GetMap (картинка).
+  // Не е потвърдено дали тези слоеве поддържат GetFeatureInfo, нито точния формат/имена на полетата
+  // в отговора - кодът пробва няколко правдоподобни варианта и пада грациозно при грешка.
+  const FIRE_CHART_INDICES = [
+    'Fire Weather index (FWI)', 'Initial Spread Index (ISI)', 'Built Up Index (BUI)',
+    'Fine Fuel Moisture Code (FFMC)', 'Duff Moisture Code (DMC)', 'Drought Code (DC)',
+    'Anomaly', 'Ranking'
+  ];
+
+  let fireChartInstances = {};
+  let fireChartCoord = null;   // [lng, lat]
+  let fireChartBaseDate = null;
+
+  function fireChartCanvasId(indexLabel){
+    return 'fireChart_' + indexLabel.replace(/[^a-zA-Z0-9]/g, '');
+  }
+
+  function fireChartBuildSlots(){
+    const container = document.getElementById('fireChartBody');
+    container.innerHTML = FIRE_CHART_INDICES.map(idx => {
+      const canvasId = fireChartCanvasId(idx);
+      return `<div class="fire-chart-item" id="wrap_${canvasId}">
+        <div class="fire-chart-item-header"><span>${idx}</span><span class="fire-chart-status"></span></div>
+        <div class="fire-chart-canvas-wrap"><canvas id="${canvasId}"></canvas></div>
+      </div>`;
+    }).join('');
+  }
+
+  function fireChartDateRange(baseDate){
+    const dates = [];
+    for (let i = 10; i >= 0; i--) {
+      const d = new Date(baseDate);
+      d.setDate(d.getDate() - i);
+      dates.push(d);
+    }
+    return dates;
+  }
+
+  async function fireChartFetchValue(url, layerName, lng, lat, dateStr){
+    const delta = 0.05;
+    const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
+    const qUrl = `${url}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=${layerName}&QUERY_LAYERS=${layerName}&SRS=EPSG:4326&BBOX=${bbox}&WIDTH=3&HEIGHT=3&X=1&Y=1&INFO_FORMAT=application/json&FEATURE_COUNT=1&TIME=${dateStr}`;
+    try {
+      const resp = await fetch(qUrl);
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const feature = data.features && data.features[0];
+      if (!feature) return null;
+      const props = feature.properties || {};
+      const candidates = ['value', 'VALUE', 'gray_index', 'GRAY_INDEX', 'band1', 'pixel'];
+      for (const k of candidates) if (props[k] != null && !isNaN(parseFloat(props[k]))) return parseFloat(props[k]);
+      const firstNumeric = Object.values(props).find(v => v !== '' && v != null && !isNaN(parseFloat(v)));
+      return firstNumeric != null ? parseFloat(firstNumeric) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function fireChartRender(indexLabel, dates, values){
+    const canvasId = fireChartCanvasId(indexLabel);
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (fireChartInstances[canvasId]) fireChartInstances[canvasId].destroy();
+
+    const labels = dates.map(d => `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+
+    fireChartInstances[canvasId] = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          borderColor: '#aaaaaa',
+          backgroundColor: 'rgba(170,170,170,0.25)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#999',
+          spanGaps: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { maxRotation: 45, minRotation: 45, color: '#888', font: { size: 10 } }, grid: { display: false } },
+          y: { grid: { color: 'rgba(150,150,150,0.2)' }, ticks: { color: '#888', font: { size: 10 } } }
+        }
+      }
+    });
+  }
+
+  async function fireChartLoadIndex(indexLabel){
+    const sourceLabel = document.getElementById('fireChartSource').value;
+    const url = FORECAST_SOURCE_URLS[sourceLabel] || FORECAST_SOURCE_URLS['ECMWF (8 km res.)'];
+    const layerMap = INDEX_LAYER_MAP[sourceLabel] || INDEX_LAYER_MAP['ECMWF (8 km res.)'];
+    const layerName = layerMap[indexLabel];
+    const dates = fireChartDateRange(fireChartBaseDate);
+    const [lng, lat] = fireChartCoord;
+    const values = await Promise.all(dates.map(d => fireChartFetchValue(url, layerName, lng, lat, isoDate(d))));
+    return { dates, values };
+  }
+
+  async function fireChartRenderAll(){
+    if (!fireChartCoord) return;
+    FIRE_CHART_INDICES.forEach(async (idx) => {
+      const wrap = document.getElementById('wrap_' + fireChartCanvasId(idx));
+      const statusEl = wrap ? wrap.querySelector('.fire-chart-status') : null;
+      if (statusEl) statusEl.textContent = 'Зарежда се…';
+      try {
+        const { dates, values } = await fireChartLoadIndex(idx);
+        if (values.every(v => v == null)) {
+          if (statusEl) statusEl.textContent = 'Няма данни';
+        } else {
+          if (statusEl) statusEl.textContent = '';
+          fireChartRender(idx, dates, values);
+        }
+      } catch (e) {
+        if (statusEl) statusEl.textContent = 'Грешка';
+      }
+    });
+  }
+
+  function openFireDangerChart(feature){
+    if (!feature || !feature.centroid) return;
+    fireChartBuildSlots();
+    document.getElementById('fireChartPanel').classList.add('open');
+    fireChartCoord = [feature.centroid[1], feature.centroid[0]]; // [lat,lng] -> [lng,lat]
+    fireChartBaseDate = feature.date || new Date();
+    document.getElementById('fireChartCoord').textContent =
+      `Coordinate: [${fireChartCoord[0].toFixed(7)}, ${fireChartCoord[1].toFixed(7)}]`;
+    fireChartRenderAll();
+  }
+
+  document.getElementById('fireChartSource').addEventListener('change', fireChartRenderAll);
+  document.getElementById('fireChartCloseBtn').addEventListener('click', () => {
+    document.getElementById('fireChartPanel').classList.remove('open');
+  });
+
+  // Първоначално състояние на легендата (след като всички секции по-горе са дефинирани)
+  updateLegend();
+</script>
+
+</body>
+</html>
