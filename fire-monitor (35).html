@@ -132,6 +132,194 @@
     border-bottom-color: transparent;
   }
 
+  /*---------Weather Conditions panel styles----------*/
+  .weather-location {
+  font-size: 11px;
+  color: var(--text-mid);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.weather-status {
+  font-size: 10.5px;
+  color: var(--muted-text);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.weather-status.loading {
+  color: var(--accent);
+}
+
+.weather-status.error {
+  color: #c0392b;
+}
+
+.weather-current-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.weather-card {
+  min-height: 58px;
+  padding: 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--btn-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.weather-card i {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.weather-card span {
+  color: var(--text-mid);
+  font-size: 10px;
+}
+
+.weather-card strong {
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.weather-extra {
+  border-top: 1px solid var(--border);
+  padding-top: 6px;
+}
+
+.weather-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 10.5px;
+  color: var(--text-mid);
+}
+
+.weather-row strong {
+  color: var(--text-dark);
+  font-size: 10.5px;
+  text-align: right;
+}
+
+.weather-source {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-text);
+  font-size: 9.5px;
+}
+
+.weather-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  margin-bottom: 7px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dark);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.weather-section-title i {
+  color: var(--accent);
+}
+
+.weather-chart-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.weather-chart-selector label {
+  color: var(--text-mid);
+  font-size: 10.5px;
+}
+
+.weather-chart-selector select {
+  width: 100%;
+  padding: 5px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--input-bg);
+  color: var(--text-dark);
+  font-size: 11px;
+}
+
+.weather-chart-container {
+  position: relative;
+  width: 100%;
+  height: 170px;
+  padding: 5px 0;
+}
+
+.weather-chart-container canvas {
+  max-width: 100%;
+}
+
+/*--------- Wind field styles ----------*/
+.wind-legend{
+  display: none;
+  margin: 8px 0 4px;
+  padding: 8px 9px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--btn-bg);
+}
+.wind-legend.visible{ display: block; }
+
+.wind-legend-title{
+  color: var(--text-dark);
+  font-size: 10.5px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.wind-legend-row{
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-mid);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.wind-swatch{
+  width: 16px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.wind-legend-note{
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-text);
+  font-size: 9.5px;
+  line-height: 1.35;
+}
+
+.wind-arrow{
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.75));
+  transition: transform .25s ease;
+}
+.wind-arrow svg{ display: block; }
+
   /* Rapid Damage Assessment: собствен вътрешен scroller, за да не покрива km ориентирчето */
   .panel-body{ overflow-y: auto; }
   .panel-body::-webkit-scrollbar{ width: 6px; }
@@ -347,6 +535,201 @@
     letter-spacing: .2px;
   }
   .locator-btn:hover{ background: var(--btn-bg-hover); }
+
+
+  /*--------- Active Fire Alerts panel styles ----------*/
+.alerts-panel-body {
+  padding: 10px 12px;
+}
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.alerts-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.alerts-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.alerts-label {
+  font-size: 11px;
+  color: var(--text-mid);
+}
+
+.alerts-refresh-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--btn-bg);
+  color: var(--text-mid);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.alerts-refresh-btn:hover {
+  background: var(--btn-bg-hover);
+  color: var(--text-dark);
+}
+
+.alerts-filters {
+  margin-bottom: 8px;
+}
+
+.alerts-filters select {
+  width: 100%;
+  padding: 5px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--input-bg);
+  color: var(--text-dark);
+  font-size: 11px;
+}
+
+.alerts-list {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alerts-empty {
+  text-align: center;
+  color: var(--muted-text);
+  font-size: 11px;
+  font-style: italic;
+  padding: 16px 8px;
+}
+
+.alert-item {
+  border: 2px solid;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--btn-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alert-item.priority-high {
+  border-color: #e53935;
+}
+
+.alert-item.priority-medium {
+  border-color: #fb8c00;
+}
+
+.alert-item.priority-low {
+  border-color: #1e88e5;
+}
+
+.alert-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.alert-item-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.alert-item-title i {
+  font-size: 11px;
+}
+
+.alert-item.priority-high .alert-item-title i {
+  color: #e53935;
+}
+
+.alert-item.priority-medium .alert-item-title i {
+  color: #fb8c00;
+}
+
+.alert-item.priority-low .alert-item-title i {
+  color: #1e88e5;
+}
+
+.alert-item-time {
+  font-size: 10px;
+  color: var(--muted-text);
+}
+
+.alert-item-body {
+  font-size: 10.5px;
+  color: var(--text-mid);
+  line-height: 1.35;
+}
+
+.alert-item-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.alert-item-actions button {
+  flex: 1;
+  padding: 5px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--input-bg);
+  color: var(--text-mid);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.alert-item-actions button:hover {
+  background: var(--btn-bg-hover);
+  color: var(--text-dark);
+}
+
+.alert-item-actions button.btn-view {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: #ffffff;
+}
+
+.alert-item-actions button.btn-view:hover {
+  background: var(--accent-dark);
+}
+
+.alerts-footer {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.alerts-updated {
+  font-size: 9.5px;
+  color: var(--muted-text);
+}
 
   /* ---------- Right toolbar ---------- */
   .map-toolbar{
@@ -761,6 +1144,210 @@
     display: none;
   }
 
+  /*--------- Search styles ----------*/
+.search-box{
+  position: absolute;
+  top: 58px;
+  right: 66px;
+  height: 42px;
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+  transition: width .25s ease, opacity .18s ease, padding .25s ease;
+}
+.search-box.open{
+  width: 320px;
+  opacity: 1;
+  pointer-events: auto;
+  padding: 0 10px;
+}
+.search-icon{
+  color: var(--muted-text);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.search-box input{
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+  font-size: 13px;
+  outline: none;
+}
+.search-box input::placeholder{ color: var(--muted-text); }
+.search-spinner{
+  display: none;
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.search-spinner.visible{ display: inline-block; }
+.search-clear{
+  display: none;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted-text);
+  cursor: pointer;
+  font-size: 12px;
+  align-items: center;
+  justify-content: center;
+}
+.search-clear.visible{ display: flex; }
+.search-clear:hover{ background: var(--btn-bg-hover); color: var(--text-dark); }
+
+.search-results{
+  position: absolute;
+  top: 102px;
+  right: 66px;
+  width: 320px;
+  max-height: calc(100vh - 140px);
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+  z-index: 1059;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+}
+.search-results.open{ display: flex; }
+
+.search-results-list{
+  overflow-y: auto;
+  padding: 6px;
+}
+.search-result{
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 7px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.search-result:hover,
+.search-result.active{ background: var(--btn-bg-hover); }
+.search-result-icon{
+  width: 18px;
+  text-align: center;
+  padding-top: 1px;
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.search-result-text{ min-width: 0; flex: 1; }
+.search-result-name{
+  color: var(--text-dark);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-result-name mark{
+  background: transparent;
+  color: var(--accent);
+  font-weight: 800;
+}
+.search-result-meta{
+  color: var(--muted-text);
+  font-size: 10.5px;
+  line-height: 1.35;
+  margin-top: 1px;
+}
+.search-hint{
+  padding: 14px 10px;
+  text-align: center;
+  color: var(--muted-text);
+  font-size: 11px;
+  font-style: italic;
+}
+.search-group-label{
+  padding: 7px 8px 3px;
+  color: var(--muted-text);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.search-results-footer{
+  padding: 6px 10px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-text);
+  font-size: 9.5px;
+  flex-shrink: 0;
+}
+
+.search-result{ position: relative; }
+
+.search-result-remove{
+  display: none;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: center;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted-text);
+  cursor: pointer;
+  font-size: 11px;
+  align-items: center;
+  justify-content: center;
+}
+.search-result:hover .search-result-remove,
+.search-result.active .search-result-remove{ display: flex; }
+.search-result-remove:hover{
+  background: var(--btn-bg-hover);
+  color: #e53935;
+}
+
+@media (max-width: 720px){
+  .search-box:not(.open){ display: none; }
+  .search-box.open{
+    left: 8px;
+    right: 8px;
+    width: auto;
+    top: 66px;
+  }
+  .search-results{
+    left: 8px;
+    right: 8px;
+    width: auto;
+    top: 114px;
+    max-height: calc(100vh - 150px);
+  }
+  .search-box input{ font-size: 15px; height: 34px; }
+}
+
+@media (max-width: 720px), (hover: none){
+  .search-result-remove{
+    display: flex;
+    width: 26px;
+    height: 26px;
+    margin-left: 6px;
+    font-size: 13px;
+  }
+}
+
   @media (max-width: 720px){
     .sidebar{ width: 82%; max-width: 300px; transform: translateX(-100%); transition: transform .25s ease; }
     .sidebar.open{ transform: translateX(0); }
@@ -823,6 +1410,90 @@
       <div class="map-option-note" id="mapOptionNote"></div>
     </div>
 
+    <!-- Weather Conditions -->
+    <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-cloud-sun"></i>Weather Conditions</span></div>
+    <div class="panel-body weather-panel-body">
+  <div class="weather-location" id="weatherLocation">
+    Select a point on the map
+  </div>
+
+  <div class="weather-status" id="weatherStatus">
+    No weather data loaded
+  </div>
+
+  <div class="weather-current-grid">
+    <div class="weather-card">
+      <i class="fa-solid fa-temperature-half"></i>
+      <span>Temperature</span>
+      <strong id="weatherTemperature">—</strong>
+    </div>
+
+    <div class="weather-card">
+      <i class="fa-solid fa-droplet"></i>
+      <span>Humidity</span>
+      <strong id="weatherHumidity">—</strong>
+    </div>
+
+    <div class="weather-card">
+      <i class="fa-solid fa-wind"></i>
+      <span>Wind</span>
+      <strong id="weatherWind">—</strong>
+    </div>
+
+    <div class="weather-card">
+      <i class="fa-solid fa-cloud-rain"></i>
+      <span>Precipitation</span>
+      <strong id="weatherPrecipitation">—</strong>
+    </div>
+  </div>
+
+  <div class="weather-extra">
+    <div class="weather-row">
+      <span>Wind direction</span>
+      <strong id="weatherWindDirection">—</strong>
+    </div>
+
+    <div class="weather-row">
+      <span>Wind gusts</span>
+      <strong id="weatherWindGusts">—</strong>
+    </div>
+
+    <div class="weather-row">
+      <span>UV index</span>
+      <strong id="weatherUvIndex">—</strong>
+    </div>
+
+    <div class="weather-row">
+      <span>Apparent temperature</span>
+      <strong id="weatherApparentTemperature">—</strong>
+    </div>
+  </div>
+
+  <div class="weather-section-title">
+  <i class="fa-solid fa-chart-line"></i>
+  Hourly Forecast
+</div>
+
+<div class="weather-chart-selector">
+  <label for="weatherChartType">Forecast parameter</label>
+
+  <select id="weatherChartType">
+    <option value="temperature">Temperature</option>
+    <option value="humidity">Humidity</option>
+    <option value="wind">Wind speed</option>
+    <option value="precipitation">Precipitation</option>
+  </select>
+</div>
+
+<div class="weather-chart-container">
+  <canvas id="weatherForecastChart"></canvas>
+</div>
+
+  <div class="weather-source" id="weatherSource">
+    Source: —
+  </div>
+</div>
+
     <!-- Forecasts -->
     <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-angles-right"></i>Forecasts</span></div>
     <div class="panel-body">
@@ -852,6 +1523,23 @@
         <span class="layer-status" id="statusLightning"></span>
         <button class="info-btn" title="Информация">i</button>
       </label>
+
+      <label class="option-row strong" style="margin-top:10px;">
+        <input type="checkbox" id="windToggle">
+        <span class="label-text">WIND FIELD (10 m)</span>
+        <span class="layer-status" id="statusWind"></span>
+        <button class="info-btn" title="Open-Meteo current wind at 10 m above ground">i</button>
+      </label>
+
+      <div class="wind-legend" id="windLegend">
+        <div class="wind-legend-title">Wind speed (km/h)</div>
+        <div class="wind-legend-row"><span class="wind-swatch" style="background:#4fc3f7"></span>&lt; 10 · calm</div>
+        <div class="wind-legend-row"><span class="wind-swatch" style="background:#66bb6a"></span>10 – 20 · light</div>
+        <div class="wind-legend-row"><span class="wind-swatch" style="background:#fdd835"></span>20 – 30 · moderate</div>
+        <div class="wind-legend-row"><span class="wind-swatch" style="background:#fb8c00"></span>30 – 45 · strong</div>
+        <div class="wind-legend-row"><span class="wind-swatch" style="background:#e53935"></span>&gt; 45 · very strong</div>
+        <div class="wind-legend-note">Arrows point in the direction the wind is blowing to.</div>
+      </div>
 
       <div class="date-display" id="forecastDateBtn" style="cursor:pointer;">
         <i class="fa-regular fa-calendar"></i>
@@ -926,6 +1614,42 @@
 
       <button class="locator-btn" id="burntAreaLocatorBtn">Burnt Area Locator</button>
     </div>
+
+    <!-- Active Fire Alerts -->
+    <div class="panel-header"><span class="panel-header-title"><i class="fa-solid fa-bell"></i>Active Fire Alerts</span></div>
+    <div class="panel-body alerts-panel-body">
+  <div class="alerts-header">
+    <div class="alerts-summary">
+      <span class="alerts-count" id="alertsCount">0</span>
+      <span class="alerts-label">active alerts</span>
+    </div>
+
+    <button class="alerts-refresh-btn" id="alertsRefreshBtn" title="Refresh alerts">
+      <i class="fa-solid fa-rotate"></i>
+    </button>
+  </div>
+
+  <div class="alerts-filters">
+    <select id="alertPriorityFilter">
+      <option value="all">All priorities</option>
+      <option value="high">High priority</option>
+      <option value="medium">Medium priority</option>
+      <option value="low">Low priority</option>
+    </select>
+  </div>
+
+  <div class="alerts-list" id="alertsList">
+    <div class="alerts-empty">
+      No active alerts. Enable MODIS/VIIRS layers to detect fires.
+    </div>
+  </div>
+
+  <div class="alerts-footer">
+    <small class="alerts-updated" id="alertsUpdated">
+      Last update: —
+    </small>
+  </div>
+</div>
   </aside>
 
   <!-- ===================== RIGHT MAP TOOLBAR ===================== -->
@@ -942,6 +1666,22 @@
     <button id="toolTheme" aria-label="Theme"><i class="fa-solid fa-palette"></i></button>
     <button id="toolList" aria-label="Legend"><i class="fa-solid fa-list"></i></button>
   </div>
+
+  <!-- ===================== SEARCH ===================== -->
+<div class="search-box" id="searchBox">
+  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+  <input type="text" id="searchInput" autocomplete="off" spellcheck="false"
+         placeholder="Place name or coordinates...">
+  <i class="fa-solid fa-spinner fa-spin search-spinner" id="searchSpinner"></i>
+  <button class="search-clear" id="searchClearBtn" aria-label="Clear">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+
+<div class="search-results" id="searchResults">
+  <div class="search-results-list" id="searchResultsList"></div>
+  <div class="search-results-footer">Data: OpenStreetMap (Nominatim)</div>
+</div>
 
   <!-- ===================== LEGEND PANEL ===================== -->
   <div class="legend-panel" id="legendPanel">
@@ -1004,6 +1744,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
   // ---------- Base map, locked to Bulgaria ----------
   const bulgariaBounds = L.latLngBounds(
@@ -1107,7 +1848,7 @@
     toolbarEl.classList.toggle('collapsed');
   });
 
-  // ---------- Collapsible sidebar panels (Map Options / Forecasts / Rapid Damage Assessment) ----------
+  // ---------- Collapsible sidebar panels (Map Options / Weather Conditions / Forecasts / Rapid Damage Assessment) ----------
   // Accordion: само едно поле може да е спуснато наведнъж - отваряне на друго затваря първото.
   const accordionPanels = [];
 
@@ -1621,6 +2362,894 @@
       updateLegend();
     });
   });
+
+
+// ---------- WEATHER CONDITIONS ----------
+
+let weatherPointMarker = null;
+let weatherRequestController = null;
+let weatherRefreshTimer = null;
+let weatherForecastChart = null;
+let latestWeatherData = null;
+
+const WEATHER_REFRESH_INTERVAL = 15 * 60 * 1000;
+
+// Преобразува градуси в посока на света
+function degreesToDirection(degrees) {
+  if (degrees === null || degrees === undefined || isNaN(degrees)) {
+    return '—';
+  }
+
+  const directions = [
+    'N', 'NNE', 'NE', 'ENE',
+    'E', 'ESE', 'SE', 'SSE',
+    'S', 'SSW', 'SW', 'WSW',
+    'W', 'WNW', 'NW', 'NNW'
+  ];
+
+  const index = Math.round(degrees / 22.5) % 16;
+  return `${directions[index]} (${Math.round(degrees)}°)`;
+}
+
+// Текстово описание на времето според WMO weather code
+function weatherCodeToText(code) {
+  const descriptions = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Freezing drizzle',
+    57: 'Dense freezing drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    66: 'Freezing rain',
+    67: 'Heavy freezing rain',
+    71: 'Slight snow',
+    73: 'Moderate snow',
+    75: 'Heavy snow',
+    77: 'Snow grains',
+    80: 'Slight rain showers',
+    81: 'Moderate rain showers',
+    82: 'Violent rain showers',
+    85: 'Slight snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with slight hail',
+    99: 'Thunderstorm with heavy hail'
+  };
+
+  return descriptions[code] || 'Unknown conditions';
+}
+
+// Закръгляне на числови стойности
+function weatherNumber(value, decimals = 1) {
+  if (value === null || value === undefined || isNaN(value)) {
+    return '—';
+  }
+
+  return Number(value).toFixed(decimals);
+}
+
+// Поставяне или преместване на маркера върху избраната точка
+function setWeatherPoint(lat, lng) {
+  if (weatherPointMarker) {
+    map.removeLayer(weatherPointMarker);
+  }
+
+  weatherPointMarker = L.circleMarker([lat, lng], {
+    radius: 7,
+    color: '#ffffff',
+    weight: 2,
+    fillColor: '#2e7bf2',
+    fillOpacity: 1
+  }).addTo(map);
+
+  weatherPointMarker.bindTooltip(
+    `Weather point<br>${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+    {
+      direction: 'top',
+      offset: [0, -8]
+    }
+  );
+}
+
+// Промяна на статуса на панела
+function setWeatherStatus(message, type = '') {
+  const statusEl = document.getElementById('weatherStatus');
+
+  if (!statusEl) {
+    return;
+  }
+
+  statusEl.textContent = message;
+  statusEl.className = 'weather-status';
+
+  if (type) {
+    statusEl.classList.add(type);
+  }
+}
+
+// Състояние при зареждане
+function setWeatherLoadingState() {
+  setWeatherStatus('Loading weather data...', 'loading');
+}
+
+// Състояние при грешка
+function setWeatherErrorState(message) {
+  setWeatherStatus(`Weather data unavailable: ${message}`, 'error');
+}
+
+// Актуализиране на координатите в панела
+function updateWeatherLocation(lat, lng) {
+  const locationEl = document.getElementById('weatherLocation');
+
+  if (!locationEl) {
+    return;
+  }
+
+  locationEl.textContent =
+    `Selected point: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+}
+
+// Актуализиране на текущите метеорологични данни
+function updateWeatherCurrent(data) {
+  const current = data.current;
+  const units = data.current_units || {};
+
+  if (!current) {
+    throw new Error('Current weather data is missing');
+  }
+
+  const temperatureEl = document.getElementById('weatherTemperature');
+  const humidityEl = document.getElementById('weatherHumidity');
+  const windEl = document.getElementById('weatherWind');
+  const precipitationEl = document.getElementById('weatherPrecipitation');
+  const windDirectionEl = document.getElementById('weatherWindDirection');
+  const windGustsEl = document.getElementById('weatherWindGusts');
+  const uvIndexEl = document.getElementById('weatherUvIndex');
+  const apparentTemperatureEl =
+    document.getElementById('weatherApparentTemperature');
+
+  if (temperatureEl) {
+    temperatureEl.textContent =
+      `${weatherNumber(current.temperature_2m)} ${units.temperature_2m || '°C'}`;
+  }
+
+  if (humidityEl) {
+    humidityEl.textContent =
+      `${weatherNumber(current.relative_humidity_2m, 0)} ${units.relative_humidity_2m || '%'}`;
+  }
+
+  if (windEl) {
+    windEl.textContent =
+      `${weatherNumber(current.wind_speed_10m)} ${units.wind_speed_10m || 'km/h'}`;
+  }
+
+  if (precipitationEl) {
+    precipitationEl.textContent =
+      `${weatherNumber(current.precipitation)} ${units.precipitation || 'mm'}`;
+  }
+
+  if (windDirectionEl) {
+    windDirectionEl.textContent =
+      degreesToDirection(current.wind_direction_10m);
+  }
+
+  if (windGustsEl) {
+    windGustsEl.textContent =
+      `${weatherNumber(current.wind_gusts_10m)} ${units.wind_gusts_10m || 'km/h'}`;
+  }
+
+  if (uvIndexEl) {
+    uvIndexEl.textContent =
+      weatherNumber(current.uv_index);
+  }
+
+  if (apparentTemperatureEl) {
+    apparentTemperatureEl.textContent =
+      `${weatherNumber(current.apparent_temperature)} ${units.apparent_temperature || '°C'}`;
+  }
+
+  const weatherSourceEl = document.getElementById('weatherSource');
+
+  if (weatherSourceEl) {
+    const description = weatherCodeToText(current.weather_code);
+
+    weatherSourceEl.textContent =
+      `Conditions: ${description} | Source: Open-Meteo | Updated: ${current.time}`;
+  }
+}
+
+// Изпращане на заявка към Open-Meteo
+async function loadWeatherData(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    setWeatherErrorState('Invalid coordinates');
+    return;
+  }
+
+  if (weatherRequestController) {
+    weatherRequestController.abort();
+  }
+
+  weatherRequestController = new AbortController();
+
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(5),
+    longitude: lng.toFixed(5),
+
+    current: [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'apparent_temperature',
+      'precipitation',
+      'weather_code',
+      'wind_speed_10m',
+      'wind_direction_10m',
+      'wind_gusts_10m',
+      'uv_index'
+    ].join(','),
+
+    hourly: [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'precipitation',
+      'precipitation_probability',
+      'wind_speed_10m',
+      'wind_direction_10m',
+      'wind_gusts_10m',
+      'uv_index',
+      'soil_moisture_0_to_1cm'
+    ].join(','),
+
+    forecast_days: '3',
+    timezone: 'Europe/Sofia',
+    wind_speed_unit: 'kmh',
+    temperature_unit: 'celsius',
+    precipitation_unit: 'mm'
+  });
+
+  const url =
+    `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+
+  setWeatherLoadingState();
+  updateWeatherLocation(lat, lng);
+
+  try {
+    const response = await fetch(url, {
+      signal: weatherRequestController.signal
+    });
+
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}`;
+
+      try {
+        const errorData = await response.json();
+
+        if (errorData.reason) {
+          errorMessage = errorData.reason;
+        }
+      } catch (error) {
+        // Няма JSON описание на грешката
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+
+    latestWeatherData = data;
+
+    updateWeatherCurrent(data);
+    updateWeatherForecast(data, 'temperature');
+
+    setWeatherPoint(lat, lng);
+    setWeatherStatus('Weather data loaded successfully');
+
+    return data;
+
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      return;
+    }
+
+    console.error('Weather request failed:', error);
+    setWeatherErrorState(error.message || 'Unknown error');
+  }
+}
+
+let selectedWeatherCoordinates = null;
+
+map.on('click', function (event) {
+  const lat = event.latlng.lat;
+  const lng = event.latlng.lng;
+
+  selectedWeatherCoordinates = { lat, lng };
+
+  if (weatherRefreshTimer) {
+    clearInterval(weatherRefreshTimer);
+  }
+
+  loadWeatherData(lat, lng);
+
+  weatherRefreshTimer = setInterval(function () {
+    if (selectedWeatherCoordinates) {
+      loadWeatherData(
+        selectedWeatherCoordinates.lat,
+        selectedWeatherCoordinates.lng
+      );
+    }
+  }, WEATHER_REFRESH_INTERVAL);
+});
+
+function formatWeatherHour(isoTime) {
+  if (!isoTime) {
+    return '—';
+  }
+
+  const date = new Date(isoTime);
+
+  return date.toLocaleTimeString('bg-BG', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function getWeatherChartConfig(type, hourly, units) {
+  const common = {
+    labels: hourly.time.map(formatWeatherHour),
+    borderWidth: 2,
+    pointRadius: 2,
+    pointHoverRadius: 4,
+    tension: 0.3,
+    fill: true
+  };
+
+  if (type === 'humidity') {
+    return {
+      ...common,
+      label: 'Humidity (%)',
+      values: hourly.relative_humidity_2m,
+      borderColor: '#3b82f6',
+      backgroundColor: 'rgba(59, 130, 246, 0.18)',
+      unit: units.relative_humidity_2m || '%',
+      beginAtZero: true
+    };
+  }
+
+  if (type === 'wind') {
+    return {
+      ...common,
+      label: 'Wind speed (km/h)',
+      values: hourly.wind_speed_10m,
+      borderColor: '#8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.18)',
+      unit: units.wind_speed_10m || 'km/h',
+      beginAtZero: true
+    };
+  }
+
+  if (type === 'precipitation') {
+    return {
+      ...common,
+      label: 'Precipitation (mm)',
+      values: hourly.precipitation,
+      borderColor: '#06b6d4',
+      backgroundColor: 'rgba(6, 182, 212, 0.18)',
+      unit: units.precipitation || 'mm',
+      beginAtZero: true
+    };
+  }
+
+  return {
+    ...common,
+    label: 'Temperature (°C)',
+    values: hourly.temperature_2m,
+    borderColor: '#ee8a1f',
+    backgroundColor: 'rgba(238, 138, 31, 0.18)',
+    unit: units.temperature_2m || '°C',
+    beginAtZero: false
+  };
+}
+
+function updateWeatherForecast(data, chartType = 'temperature') {
+  if (!data || !data.hourly) {
+    throw new Error('Hourly forecast data is missing');
+  }
+
+  const hourly = data.hourly;
+  const units = data.hourly_units || {};
+
+  if (!hourly.time || hourly.time.length === 0) {
+    throw new Error('No hourly forecast available');
+  }
+
+  const chartConfig = getWeatherChartConfig(
+    chartType,
+    {
+      time: hourly.time.slice(0, 24),
+      temperature_2m: hourly.temperature_2m
+        ? hourly.temperature_2m.slice(0, 24)
+        : [],
+      relative_humidity_2m: hourly.relative_humidity_2m
+        ? hourly.relative_humidity_2m.slice(0, 24)
+        : [],
+      wind_speed_10m: hourly.wind_speed_10m
+        ? hourly.wind_speed_10m.slice(0, 24)
+        : [],
+      precipitation: hourly.precipitation
+        ? hourly.precipitation.slice(0, 24)
+        : []
+    },
+    units
+  );
+
+  const canvas = document.getElementById('weatherForecastChart');
+
+  if (!canvas) {
+    throw new Error('Weather chart canvas not found');
+  }
+
+  if (typeof Chart === 'undefined') {
+    throw new Error('Chart.js is not loaded');
+  }
+
+  if (weatherForecastChart) {
+    weatherForecastChart.destroy();
+  }
+
+  weatherForecastChart = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+
+    data: {
+      labels: chartConfig.labels,
+
+      datasets: [
+        {
+          label: chartConfig.label,
+          data: chartConfig.values,
+          borderColor: chartConfig.borderColor,
+          backgroundColor: chartConfig.backgroundColor,
+          borderWidth: chartConfig.borderWidth,
+          pointRadius: chartConfig.pointRadius,
+          pointHoverRadius: chartConfig.pointHoverRadius,
+          tension: chartConfig.tension,
+          fill: chartConfig.fill,
+          spanGaps: true
+        }
+      ]
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+
+      plugins: {
+        legend: {
+          display: false
+        },
+
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const value = context.parsed.y;
+
+              if (value === null || value === undefined) {
+                return 'No data';
+              }
+
+              return `${chartConfig.label}: ${Number(value).toFixed(1)} ${chartConfig.unit}`;
+            }
+          }
+        }
+      },
+
+      scales: {
+        x: {
+          ticks: {
+            color: '#888',
+            font: {
+              size: 9
+            },
+            maxTicksLimit: 8
+          },
+
+          grid: {
+            display: false
+          }
+        },
+
+        y: {
+          beginAtZero: chartConfig.beginAtZero,
+          ticks: {
+            color: '#888',
+            font: {
+              size: 9
+            }
+          },
+
+          grid: {
+            color: 'rgba(150, 150, 150, 0.2)'
+          }
+        }
+      }
+    }
+  });
+}
+
+const weatherChartTypeSelect =
+  document.getElementById('weatherChartType');
+
+if (weatherChartTypeSelect) {
+  weatherChartTypeSelect.addEventListener('change', function () {
+    if (!latestWeatherData) {
+      return;
+    }
+
+    try {
+      updateWeatherForecast(
+        latestWeatherData,
+        this.value
+      );
+    } catch (error) {
+      console.error('Weather chart error:', error);
+      setWeatherErrorState(error.message);
+    }
+  });
+}
+
+
+// ---------- ACTIVE FIRE ALERTS ----------
+let activeFireAlerts = [];
+let alertsRefreshTimer = null;
+const ALERTS_REFRESH_INTERVAL = 5 * 60 * 1000;
+
+function getAlertPriority(fire) {
+  // Проста логика за приоритет - може да се подобри
+  const hoursSinceDetection = (Date.now() - fire.detectedAt) / (1000 * 60 * 60);
+
+  if (hoursSinceDetection < 6) {
+    return 'high';
+  } else if (hoursSinceDetection < 24) {
+    return 'medium';
+  } else {
+    return 'low';
+  }
+}
+
+function formatAlertTime(date) {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  } else {
+    return date.toLocaleTimeString('bg-BG', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit'
+    });
+  }
+}
+
+function createAlertElement(alert, index) {
+  const item = document.createElement('div');
+  item.className = `alert-item priority-${alert.priority}`;
+  item.dataset.index = index;
+
+  const timeAgo = formatAlertTime(alert.detectedAt);
+
+  item.innerHTML = `
+    <div class="alert-item-header">
+      <div class="alert-item-title">
+        <i class="fa-solid fa-fire"></i>
+        <span>Fire detected</span>
+      </div>
+      <div class="alert-item-time">${timeAgo}</div>
+    </div>
+
+    <div class="alert-item-body">
+      <div>Lat: ${alert.lat.toFixed(4)}, Lng: ${alert.lng.toFixed(4)}</div>
+      <div>Confidence: ${alert.confidence || 'Medium'}</div>
+      <div>Priority: ${alert.priority.toUpperCase()}</div>
+    </div>
+
+    <div class="alert-item-actions">
+      <button class="btn-view" data-action="view" data-index="${index}">
+        <i class="fa-solid fa-eye"></i>
+        View
+      </button>
+      <button data-action="dismiss" data-index="${index}">
+        <i class="fa-solid fa-check"></i>
+        Dismiss
+      </button>
+    </div>
+  `;
+
+  return item;
+}
+
+function updateAlertsList(filteredAlerts = activeFireAlerts) {
+  const listEl = document.getElementById('alertsList');
+  const countEl = document.getElementById('alertsCount');
+  const updatedEl = document.getElementById('alertsUpdated');
+
+  if (!listEl) {
+    return;
+  }
+
+  countEl.textContent = activeFireAlerts.length;
+
+  if (activeFireAlerts.length === 0) {
+    listEl.innerHTML = `
+      <div class="alerts-empty">
+        No active alerts. Enable MODIS/VIIRS layers to detect fires.
+      </div>
+    `;
+  } else if (filteredAlerts.length === 0) {
+    listEl.innerHTML = `
+      <div class="alerts-empty">
+        No alerts match the selected filter.
+      </div>
+    `;
+  } else {
+    listEl.innerHTML = '';
+
+    filteredAlerts.forEach((alert, index) => {
+      const itemEl = createAlertElement(alert, index);
+      listEl.appendChild(itemEl);
+    });
+  }
+
+  if (updatedEl) {
+    updatedEl.textContent = `Last update: ${new Date().toLocaleTimeString('bg-BG')}`;
+  }
+}
+
+function filterAlertsByPriority(priority) {
+  if (priority === 'all') {
+    return activeFireAlerts;
+  }
+
+  return activeFireAlerts.filter(alert => alert.priority === priority);
+}
+
+function viewAlertOnMap(index) {
+  const alert = activeFireAlerts[index];
+
+  if (!alert) {
+    return;
+  }
+
+  map.setView([alert.lat, alert.lng], 12);
+
+  if (weatherPointMarker) {
+    map.removeLayer(weatherPointMarker);
+  }
+
+  weatherPointMarker = L.circleMarker([alert.lat, alert.lng], {
+    radius: 8,
+    color: '#e53935',
+    weight: 3,
+    fillColor: '#ff0000',
+    fillOpacity: 1
+  }).addTo(map);
+
+  weatherPointMarker.bindPopup(`
+    <strong>Fire Alert</strong><br>
+    Lat: ${alert.lat.toFixed(4)}<br>
+    Lng: ${alert.lng.toFixed(4)}<br>
+    Detected: ${alert.detectedAt.toLocaleString()}<br>
+    Priority: ${alert.priority.toUpperCase()}
+  `).openPopup();
+}
+
+function dismissAlert(index) {
+  activeFireAlerts.splice(index, 1);
+
+  const priorityFilter = document.getElementById('alertPriorityFilter').value;
+  const filtered = filterAlertsByPriority(priorityFilter);
+  updateAlertsList(filtered);
+}
+
+async function fetchActiveFiresFromWFS(source = 'modis.hs') {
+  const wfsUrl = 'https://maps.effis.emergency.copernicus.eu/effis';
+  const bulgariaBbox = '22.30,41.20,28.65,44.25';
+
+  const params = new URLSearchParams({
+    service: 'WFS',
+    version: '1.1.0',
+    request: 'GetFeature',
+    typename: source,
+    outputFormat: 'GeoJSON',
+    bbox: `${bulgariaBbox},CRS:84`,
+    maxFeatures: '100'
+  });
+
+  const url = `${wfsUrl}?${params.toString()}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`WFS error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const now = Date.now();
+    const threeHoursMs = 3 * 60 * 60 * 1000;
+
+    const fires = data.features
+      .map(feature => {
+        const props = feature.properties;
+        const geometry = feature.geometry;
+
+        let lat, lng;
+
+        if (geometry.type === 'Point') {
+          lng = parseFloat(geometry.coordinates[0]);
+          lat = parseFloat(geometry.coordinates[1]);
+        } else if (geometry.type === 'Polygon') {
+          const coords = geometry.coordinates[0];
+          lng = parseFloat(coords[0][0]);
+          lat = parseFloat(coords[0][1]);
+        } else {
+          return null;
+        }
+
+        const dateRaw = props.acq_at || props.ACQ_AT;
+
+        let detectedAt;
+
+        if (dateRaw) {
+          detectedAt = new Date(dateRaw);
+        } else {
+          detectedAt = null;
+        }
+
+        if (!detectedAt || isNaN(detectedAt.getTime())) {
+          return null;
+        }
+
+        const confidence = props.confidence || 'Medium';
+        const satellite = source.includes('viirs') ? 'VIIRS' : 'MODIS';
+        const frp = props.frp ? parseFloat(props.frp) : null;
+
+        return {
+          lat,
+          lng,
+          detectedAt,
+          confidence,
+          satellite,
+          frp,
+          raw: props
+        };
+      })
+      .filter(fire => {
+        if (!fire) return false;
+
+        const ageMs = now - fire.detectedAt.getTime();
+        return ageMs <= threeHoursMs;
+      });
+
+    console.log(`${source}: Found ${fires.length} active fires in Bulgaria (last 3h)`);
+
+    return fires;
+
+  } catch (error) {
+    console.error(`Failed to fetch ${source}:`, error);
+    return [];
+  }
+}
+
+// Нова функция за парсване на EFFIS дати
+function parseEffisDate(dateStr) {
+  if (!dateStr) {
+    return null;
+  }
+
+  // Опитай стандартен ISO формат
+  let date = new Date(dateStr);
+
+  if (!isNaN(date.getTime())) {
+    return date;
+  }
+
+  // EFFIS понякога връща дата като "20240820" или "2024-08-20"
+  if (typeof dateStr === 'string' && dateStr.length === 8 && /^\d+$/.test(dateStr)) {
+    const year = parseInt(dateStr.substring(0, 4), 10);
+    const month = parseInt(dateStr.substring(4, 6), 10) - 1;
+    const day = parseInt(dateStr.substring(6, 8), 10);
+    date = new Date(year, month, day);
+
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+  }
+
+  // Опитай с време "HHMM"
+  if (typeof dateStr === 'string' && dateStr.length === 4 && /^\d+$/.test(dateStr)) {
+    const hours = parseInt(dateStr.substring(0, 2), 10);
+    const minutes = parseInt(dateStr.substring(2, 4), 10);
+    const now = new Date();
+    now.setHours(hours, minutes, 0, 0);
+    return now;
+  }
+
+  return null;
+}
+
+async function refreshAlerts() {
+  const modisFires = await fetchActiveFiresFromWFS('modis.hs');
+
+  activeFireAlerts = modisFires.map(fire => ({
+    ...fire,
+    priority: getAlertPriority(fire)
+  }));
+
+  const priorityFilter = document.getElementById('alertPriorityFilter').value;
+  const filtered = filterAlertsByPriority(priorityFilter);
+  updateAlertsList(filtered);
+}
+
+function setupAlertsPanel() {
+  const refreshBtn = document.getElementById('alertsRefreshBtn');
+  const priorityFilter = document.getElementById('alertPriorityFilter');
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', refreshAlerts);
+  }
+
+  if (priorityFilter) {
+    priorityFilter.addEventListener('change', function () {
+      const filtered = filterAlertsByPriority(this.value);
+      updateAlertsList(filtered);
+    });
+  }
+
+  document.getElementById('alertsList').addEventListener('click', function (e) {
+    const button = e.target.closest('button');
+
+    if (!button) {
+      return;
+    }
+
+    const action = button.dataset.action;
+    const index = parseInt(button.dataset.index, 10);
+
+    if (action === 'view') {
+      viewAlertOnMap(index);
+    } else if (action === 'dismiss') {
+      dismissAlert(index);
+    }
+  });
+
+  refreshAlerts();
+
+  alertsRefreshTimer = setInterval(refreshAlerts, ALERTS_REFRESH_INTERVAL);
+}
+
+// Инициализирай панела при зареждане
+if (typeof map !== 'undefined') {
+  setupAlertsPanel();
+}
+
 
   // ---------- Forecasts: FIRE DANGER FORECAST, независим toggle от Map Options ----------
   // ПОТВЪРДЕНО от реални примери: ECMWF живее на /gwis, Meteo France на /effis.
@@ -2356,6 +3985,624 @@
 
   // Първоначално състояние на легендата (след като всички секции по-горе са дефинирани)
   updateLegend();
+
+
+  // ---------- SEARCH ----------
+const SEARCH_DEBOUNCE_MS = 400;
+const SEARCH_RECENT_KEY = 'fireMonitorRecentSearches';
+const SEARCH_LOAD_WEATHER = true;   // load weather data for the selected point
+
+let searchDebounceTimer = null;
+let searchRequestId = 0;
+let searchResultItems = [];
+let searchActiveIndex = -1;
+let searchMarker = null;
+
+const searchBoxEl = document.getElementById('searchBox');
+const searchInputEl = document.getElementById('searchInput');
+const searchResultsEl = document.getElementById('searchResults');
+const searchListEl = document.getElementById('searchResultsList');
+const searchSpinnerEl = document.getElementById('searchSpinner');
+const searchClearEl = document.getElementById('searchClearBtn');
+const searchToolBtn = document.getElementById('toolSearch');
+
+function searchEscapeHtml(str){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function searchHighlight(text, query){
+  const safe = searchEscapeHtml(text);
+
+  if (!query) return safe;
+
+  const idx = safe.toLowerCase().indexOf(query.toLowerCase());
+
+  if (idx === -1) return safe;
+
+  return safe.slice(0, idx)
+    + '<mark>' + safe.slice(idx, idx + query.length) + '</mark>'
+    + safe.slice(idx + query.length);
+}
+
+/* --- coordinate detection --- */
+function searchParseCoords(q){
+  const m = q.trim().match(/^(-?\d{1,2}(?:[.,]\d+)?)\s*[,; ]\s*(-?\d{1,3}(?:[.,]\d+)?)$/);
+
+  if (!m) return null;
+
+  const a = parseFloat(m[1].replace(',', '.'));
+  const b = parseFloat(m[2].replace(',', '.'));
+
+  if (isNaN(a) || isNaN(b)) return null;
+  if (Math.abs(a) > 90 || Math.abs(b) > 180) return null;
+
+  return {
+    type: 'coords',
+    icon: 'fa-crosshairs',
+    name: a.toFixed(4) + ', ' + b.toFixed(4),
+    meta: 'Go to coordinates',
+    lat: a,
+    lng: b,
+    zoom: 13
+  };
+}
+
+/* --- geocoding via Nominatim --- */
+async function searchGeocode(query, reqId){
+  const params = new URLSearchParams({
+    format: 'json',
+    limit: '6',
+    countrycodes: 'bg',
+    addressdetails: '1',
+    'accept-language': 'en',
+    q: query
+  });
+
+  const url = 'https://nominatim.openstreetmap.org/search?' + params.toString();
+
+  const response = await fetch(url);
+
+  if (!response.ok) throw new Error('Nominatim error: ' + response.status);
+
+  const data = await response.json();
+
+  if (reqId !== searchRequestId) return [];
+
+  return data.map(item => {
+    const a = item.address || {};
+
+    const name = a.city || a.town || a.village || a.hamlet
+      || a.municipality || a.county || item.name
+      || item.display_name.split(',')[0];
+
+    const metaParts = [];
+
+    if (item.type) metaParts.push(item.type.replace(/_/g, ' '));
+    if (a.municipality) metaParts.push('mun. ' + a.municipality.replace(/^Municipality\s+of\s+/i, ''));
+    if (a.county) metaParts.push('prov. ' + a.county.replace(/\s+Province$/i, ''));
+
+    return {
+      type: 'place',
+      icon: item.type === 'administrative' ? 'fa-map' : 'fa-location-dot',
+      name: name,
+      meta: metaParts.join(' · '),
+      lat: parseFloat(item.lat),
+      lng: parseFloat(item.lon),
+      bbox: item.boundingbox ? item.boundingbox.map(Number) : null,
+      zoom: 12
+    };
+  });
+}
+
+/* --- recent searches --- */
+function searchGetRecent(){
+  try {
+    const raw = localStorage.getItem(SEARCH_RECENT_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function searchSaveRecent(item){
+  try {
+    const recent = searchGetRecent()
+      .filter(r => !(r.name === item.name && r.lat === item.lat));
+
+    recent.unshift({
+      type: 'recent',
+      icon: 'fa-clock-rotate-left',
+      name: item.name,
+      meta: item.meta || '',
+      lat: item.lat,
+      lng: item.lng,
+      zoom: item.zoom || 12
+    });
+
+    localStorage.setItem(SEARCH_RECENT_KEY, JSON.stringify(recent.slice(0, 5)));
+  } catch (e) {
+    /* localStorage may be unavailable */
+  }
+}
+
+function searchRemoveRecent(index){
+  try {
+    const recent = searchGetRecent();
+
+    recent.splice(index, 1);
+
+    localStorage.setItem(SEARCH_RECENT_KEY, JSON.stringify(recent));
+
+    if (recent.length > 0) {
+      searchRender(recent, '', 'Recent searches');
+    } else {
+      searchListEl.innerHTML =
+        '<div class="search-hint">Enter a place name or coordinates ' +
+        '(42.6977, 23.3219).</div>';
+      searchResultItems = [];
+    }
+  } catch (e) {
+    /* localStorage may be unavailable */
+  }
+}
+
+/* --- rendering --- */
+function searchRender(items, query, groupLabel){
+  searchResultItems = items;
+  searchActiveIndex = -1;
+  searchListEl.innerHTML = '';
+
+  if (items.length === 0) {
+    searchListEl.innerHTML = '<div class="search-hint">No results found.</div>';
+    searchResultsEl.classList.add('open');
+    return;
+  }
+
+  if (groupLabel) {
+    const label = document.createElement('div');
+    label.className = 'search-group-label';
+    label.textContent = groupLabel;
+    searchListEl.appendChild(label);
+  }
+
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'search-result type-' + item.type;
+    row.dataset.index = i;
+
+        row.innerHTML =
+      '<div class="search-result-icon"><i class="fa-solid ' + item.icon + '"></i></div>' +
+      '<div class="search-result-text">' +
+        '<div class="search-result-name">' + searchHighlight(item.name, query) + '</div>' +
+        (item.meta ? '<div class="search-result-meta">' + searchEscapeHtml(item.meta) + '</div>' : '') +
+      '</div>' +
+      (item.type === 'recent'
+        ? '<button class="search-result-remove" data-remove="' + i + '" ' +
+          'aria-label="Remove from recent" title="Remove from recent">' +
+          '<i class="fa-solid fa-xmark"></i></button>'
+        : '');
+
+    searchListEl.appendChild(row);
+  });
+
+  searchResultsEl.classList.add('open');
+}
+
+function searchSetActive(index){
+  const rows = searchListEl.querySelectorAll('.search-result');
+
+  rows.forEach(r => r.classList.remove('active'));
+
+  if (index < 0 || index >= rows.length) {
+    searchActiveIndex = -1;
+    return;
+  }
+
+  searchActiveIndex = index;
+  rows[index].classList.add('active');
+  rows[index].scrollIntoView({ block: 'nearest' });
+}
+
+/* --- main search --- */
+async function searchRun(query){
+  const reqId = ++searchRequestId;
+
+  if (!query || query.trim().length < 2) {
+    const recent = searchGetRecent();
+
+    if (recent.length > 0) {
+      searchRender(recent, '', 'Recent searches');
+    } else {
+      searchListEl.innerHTML =
+        '<div class="search-hint">Enter a place name or coordinates ' +
+        '(42.6977, 23.3219).</div>';
+      searchResultItems = [];
+      searchResultsEl.classList.add('open');
+    }
+    return;
+  }
+
+  const coords = searchParseCoords(query);
+
+  if (coords) {
+    searchRender([coords], query, null);
+    return;
+  }
+
+  searchSpinnerEl.classList.add('visible');
+
+  try {
+    const places = await searchGeocode(query, reqId);
+
+    if (reqId !== searchRequestId) return;
+
+    searchRender(places, query, null);
+  } catch (err) {
+    console.error('Search geocode failed:', err);
+
+    if (reqId === searchRequestId) {
+      searchListEl.innerHTML =
+        '<div class="search-hint">Search service unavailable. Please try again.</div>';
+      searchResultItems = [];
+      searchResultsEl.classList.add('open');
+    }
+  } finally {
+    if (reqId === searchRequestId) searchSpinnerEl.classList.remove('visible');
+  }
+}
+
+/* --- result selection --- */
+function searchSelect(index){
+  const item = searchResultItems[index];
+
+  if (!item) return;
+
+  if (item.bbox) {
+    map.flyToBounds([[item.bbox[0], item.bbox[2]], [item.bbox[1], item.bbox[3]]], {
+      maxZoom: 13,
+      duration: 0.8
+    });
+  } else {
+    map.flyTo([item.lat, item.lng], item.zoom || 12, { duration: 0.8 });
+  }
+
+  if (searchMarker) map.removeLayer(searchMarker);
+
+  searchMarker = L.circleMarker([item.lat, item.lng], {
+    radius: 8,
+    color: '#1e88e5',
+    weight: 3,
+    fillColor: '#42a5f5',
+    fillOpacity: 0.9
+  }).addTo(map);
+
+  searchMarker.bindPopup(
+    '<strong>' + searchEscapeHtml(item.name) + '</strong>' +
+    (item.meta ? '<br>' + searchEscapeHtml(item.meta) : '') +
+    '<br>' + item.lat.toFixed(4) + ', ' + item.lng.toFixed(4)
+  ).openPopup();
+
+  if (item.type !== 'recent') searchSaveRecent(item);
+
+  // Load weather data through the existing map click handler
+  if (SEARCH_LOAD_WEATHER) {
+    map.fire('click', { latlng: L.latLng(item.lat, item.lng) });
+  }
+
+  searchResultsEl.classList.remove('open');
+}
+
+/* --- open and close --- */
+function searchOpen(){
+  searchBoxEl.classList.add('open');
+  searchToolBtn.classList.add('active-tool');
+  searchInputEl.focus();
+  searchRun(searchInputEl.value);
+}
+
+function searchClose(){
+  searchBoxEl.classList.remove('open');
+  searchResultsEl.classList.remove('open');
+  searchToolBtn.classList.remove('active-tool');
+  searchSpinnerEl.classList.remove('visible');
+  searchRequestId++;
+}
+
+/* --- events --- */
+searchToolBtn.addEventListener('click', function(){
+  if (searchBoxEl.classList.contains('open')) {
+    searchClose();
+  } else {
+    searchOpen();
+  }
+});
+
+searchInputEl.addEventListener('input', function(){
+  const value = this.value;
+
+  searchClearEl.classList.toggle('visible', value.length > 0);
+
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => searchRun(value), SEARCH_DEBOUNCE_MS);
+});
+
+searchInputEl.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    searchSetActive(Math.min(searchActiveIndex + 1, searchResultItems.length - 1));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    searchSetActive(Math.max(searchActiveIndex - 1, 0));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    searchSelect(searchActiveIndex >= 0 ? searchActiveIndex : 0);
+  } else if (e.key === 'Escape') {
+    searchClose();
+  }
+});
+
+searchClearEl.addEventListener('click', function(){
+  searchInputEl.value = '';
+  searchClearEl.classList.remove('visible');
+  searchInputEl.focus();
+  searchRun('');
+});
+
+searchListEl.addEventListener('click', function(e){
+  const removeBtn = e.target.closest('.search-result-remove');
+
+  if (removeBtn) {
+    e.stopPropagation();
+    searchRemoveRecent(parseInt(removeBtn.dataset.remove, 10));
+    return;
+  }
+
+  const row = e.target.closest('.search-result');
+  if (row) searchSelect(parseInt(row.dataset.index, 10));
+});
+
+document.addEventListener('click', function(e){
+  if (!searchBoxEl.contains(e.target)
+      && !searchResultsEl.contains(e.target)
+      && !searchToolBtn.contains(e.target)) {
+    searchResultsEl.classList.remove('open');
+  }
+});
+
+
+// ---------- WIND FIELD ----------
+const WIND_API = 'https://api.open-meteo.com/v1/forecast';
+const WIND_BBOX = { south: 41.10, north: 44.30, west: 22.20, east: 28.75 };
+const WIND_TARGET_COLS = 9;
+const WIND_TARGET_ROWS = 7;
+const WIND_MAX_POINTS = 90;
+const WIND_REFRESH_MS = 15 * 60 * 1000;
+const WIND_MOVE_DEBOUNCE_MS = 600;
+
+let windLayerGroup = null;
+let windEnabled = false;
+let windRequestId = 0;
+let windMoveTimer = null;
+let windRefreshTimer = null;
+
+const windToggleEl = document.getElementById('windToggle');
+const windStatusEl = document.getElementById('statusWind');
+const windLegendEl = document.getElementById('windLegend');
+
+function windSetStatus(text, isError){
+  if (!windStatusEl) return;
+
+  windStatusEl.textContent = text || '';
+  windStatusEl.style.color = isError ? '#c0392b' : '';
+}
+
+function windColor(speed){
+  if (speed > 45) return '#e53935';
+  if (speed > 30) return '#fb8c00';
+  if (speed > 20) return '#fdd835';
+  if (speed > 10) return '#66bb6a';
+  return '#4fc3f7';
+}
+
+function windArrowScale(speed){
+  if (speed > 45) return 1.25;
+  if (speed > 30) return 1.15;
+  if (speed > 20) return 1.05;
+  if (speed > 10) return 0.95;
+  return 0.85;
+}
+
+/* Build a grid of sample points limited to the visible area and Bulgaria */
+function windBuildGrid(){
+  const b = map.getBounds();
+
+  const south = Math.max(b.getSouth(), WIND_BBOX.south);
+  const north = Math.min(b.getNorth(), WIND_BBOX.north);
+  const west  = Math.max(b.getWest(),  WIND_BBOX.west);
+  const east  = Math.min(b.getEast(),  WIND_BBOX.east);
+
+  if (north <= south || east <= west) return [];
+
+  const cols = WIND_TARGET_COLS;
+  const rows = WIND_TARGET_ROWS;
+
+  const stepLon = (east - west) / cols;
+  const stepLat = (north - south) / rows;
+
+  const points = [];
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      points.push({
+        lat: +(south + stepLat * (r + 0.5)).toFixed(4),
+        lng: +(west + stepLon * (c + 0.5)).toFixed(4)
+      });
+    }
+  }
+
+  return points.slice(0, WIND_MAX_POINTS);
+}
+
+async function windFetch(points, reqId){
+  const params = new URLSearchParams({
+    latitude: points.map(p => p.lat).join(','),
+    longitude: points.map(p => p.lng).join(','),
+    current: 'wind_speed_10m,wind_direction_10m,wind_gusts_10m',
+    wind_speed_unit: 'kmh',
+    timezone: 'UTC'
+  });
+
+  const response = await fetch(WIND_API + '?' + params.toString());
+
+  if (!response.ok) throw new Error('Open-Meteo error: ' + response.status);
+
+  const data = await response.json();
+
+  if (reqId !== windRequestId) return [];
+
+  // Single point returns an object, multiple points return an array
+  const list = Array.isArray(data) ? data : [data];
+
+  return list.map((entry, i) => {
+    const cur = entry.current || {};
+
+    if (cur.wind_speed_10m === undefined || cur.wind_direction_10m === undefined) {
+      return null;
+    }
+
+    return {
+      lat: entry.latitude !== undefined ? entry.latitude : points[i].lat,
+      lng: entry.longitude !== undefined ? entry.longitude : points[i].lng,
+      speed: cur.wind_speed_10m,
+      gust: cur.wind_gusts_10m,
+      direction: cur.wind_direction_10m
+    };
+  }).filter(Boolean);
+}
+
+function windCreateArrow(point){
+  const color = windColor(point.speed);
+  const scale = windArrowScale(point.speed);
+
+  // wind_direction_10m is the direction the wind comes FROM,
+  // so the arrow must point 180 degrees the other way
+  const rotation = (point.direction + 180) % 360;
+
+  const html =
+    '<div class="wind-arrow" style="transform: rotate(' + rotation + 'deg) scale(' + scale + '); color:' + color + '">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
+        '<path d="M12 21 L12 4" stroke="currentColor" stroke-width="2.6" ' +
+              'stroke-linecap="round" fill="none"/>' +
+        '<path d="M6.6 10.2 L12 3.4 L17.4 10.2" stroke="currentColor" stroke-width="2.6" ' +
+              'stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      '</svg>' +
+    '</div>';
+
+  const marker = L.marker([point.lat, point.lng], {
+    icon: L.divIcon({
+      className: 'wind-arrow-icon',
+      html: html,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    }),
+    interactive: true,
+    keyboard: false
+  });
+
+  const gustText = (point.gust !== undefined && point.gust !== null)
+    ? '<br>Gusts: <strong>' + Math.round(point.gust) + ' km/h</strong>'
+    : '';
+
+  marker.bindTooltip(
+    'Wind: <strong>' + Math.round(point.speed) + ' km/h</strong>' +
+    '<br>From: <strong>' + Math.round(point.direction) + '&deg;</strong>' +
+    gustText +
+    '<br>' + point.lat.toFixed(3) + ', ' + point.lng.toFixed(3),
+    { direction: 'top', offset: [0, -8], sticky: false }
+  );
+
+  return marker;
+}
+
+async function windRefresh(){
+  if (!windEnabled) return;
+
+  const reqId = ++windRequestId;
+  const points = windBuildGrid();
+
+  if (points.length === 0) {
+    if (windLayerGroup) windLayerGroup.clearLayers();
+    windSetStatus('outside area');
+    return;
+  }
+
+  windSetStatus('loading...');
+
+  try {
+    const data = await windFetch(points, reqId);
+
+    if (reqId !== windRequestId || !windEnabled) return;
+
+    windLayerGroup.clearLayers();
+
+    data.forEach(p => windLayerGroup.addLayer(windCreateArrow(p)));
+
+    windSetStatus(data.length + ' pts');
+  } catch (err) {
+    console.error('Wind field failed:', err);
+
+    if (reqId === windRequestId) windSetStatus('error', true);
+  }
+}
+
+function windEnable(){
+  windEnabled = true;
+
+  if (!windLayerGroup) windLayerGroup = L.layerGroup();
+
+  windLayerGroup.addTo(map);
+  if (windLegendEl) windLegendEl.classList.add('visible');
+
+  windRefresh();
+
+  clearInterval(windRefreshTimer);
+  windRefreshTimer = setInterval(windRefresh, WIND_REFRESH_MS);
+}
+
+function windDisable(){
+  windEnabled = false;
+  windRequestId++;
+
+  clearInterval(windRefreshTimer);
+  clearTimeout(windMoveTimer);
+
+  if (windLayerGroup) {
+    windLayerGroup.clearLayers();
+    map.removeLayer(windLayerGroup);
+  }
+
+  if (windLegendEl) windLegendEl.classList.remove('visible');
+
+  windSetStatus('');
+}
+
+windToggleEl.addEventListener('change', function(){
+  if (this.checked) {
+    windEnable();
+  } else {
+    windDisable();
+  }
+});
+
+map.on('moveend zoomend', function(){
+  if (!windEnabled) return;
+
+  clearTimeout(windMoveTimer);
+  windMoveTimer = setTimeout(windRefresh, WIND_MOVE_DEBOUNCE_MS);
+});
 </script>
 
 </body>
