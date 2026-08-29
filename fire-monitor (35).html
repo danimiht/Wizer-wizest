@@ -320,6 +320,73 @@
 }
 .wind-arrow svg{ display: block; }
 
+
+/* ---------- Wind forecast timeline ---------- */
+
+.wind-timeline-controls {
+  display: none;
+  margin: 6px 0 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--btn-bg);
+}
+
+.wind-timeline-controls.visible {
+  display: block;
+}
+
+.wind-timeline-label {
+  margin-bottom: 5px;
+  color: var(--text-mid);
+  font-size: 10px;
+}
+
+.wind-timeline-row {
+  display: grid;
+  grid-template-columns: 28px 28px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 5px;
+}
+
+.wind-time-btn,
+.wind-time-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 27px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-dark);
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.wind-time-btn:hover,
+.wind-time-play-btn:hover {
+  background: var(--btn-bg-hover);
+}
+
+.wind-time-play-btn.playing {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent-dark);
+}
+
+.wind-time-display {
+  overflow: hidden;
+  color: var(--text-dark);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
   /* Rapid Damage Assessment: собствен вътрешен scroller, за да не покрива km ориентирчето */
   .panel-body{ overflow-y: auto; }
   .panel-body::-webkit-scrollbar{ width: 6px; }
@@ -729,6 +796,81 @@
 .alerts-updated {
   font-size: 9.5px;
   color: var(--muted-text);
+}
+
+/* ---------- Evacuation & Response ---------- */
+
+.evacuation-panel-body {
+  padding-bottom: 12px;
+}
+
+.evacuation-route-controls {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.evacuation-route-controls.visible {
+  display: block;
+}
+
+.evacuation-route-controls label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-mid);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.evacuation-route-controls input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-dark);
+  font-size: 11.5px;
+  outline: none;
+}
+
+.evacuation-route-controls input:focus {
+  border-color: var(--accent);
+}
+
+.evacuation-route-controls .full-btn {
+  margin-top: 7px;
+  margin-bottom: 0;
+}
+
+#clearEvacRouteBtn {
+  display: none;
+}
+
+#evacuationRouteInfo {
+  min-height: 15px;
+  margin-top: 7px;
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+#evacuationRouteInfo.error {
+  color: #c0392b;
+}
+
+#evacuationRouteInfo.success {
+  color: #2e9e3f;
+}
+
+.evacuation-selected-point {
+  background: transparent;
+  border: none;
+}
+
+.evacuation-station-marker {
+  background: transparent;
+  border: none;
 }
 
   /* ---------- Right toolbar ---------- */
@@ -1320,6 +1462,192 @@
   color: #e53935;
 }
 
+/* ---------- Route instructions panel ---------- */
+.route-instructions-panel {
+  position: absolute;
+  top: 16px;
+  right: 66px;
+  z-index: 1080;
+  display: none;
+  width: 310px;
+  max-width: calc(100vw - 90px);
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  flex-direction: column;
+  color: #ffffff;
+  background: rgba(24, 32, 45, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.42);
+  font-size: 12px;
+}
+
+.route-instructions-panel.visible {
+  display: flex;
+}
+
+.route-instructions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  background: rgba(12, 18, 28, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.route-instructions-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 7px;
+  font-weight: 700;
+}
+
+.route-instructions-title i {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+#routeInstructionsDestination {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-instructions-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  padding: 0;
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s ease, transform 0.2s ease;
+}
+
+.route-instructions-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.route-instructions-content {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.32s ease,
+    opacity 0.20s ease;
+}
+
+.route-instructions-content-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.route-instructions-panel.instructions-collapsed
+.route-instructions-content {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.route-instructions-toggle i {
+  transition: transform 0.25s ease;
+}
+
+.route-instructions-panel.instructions-collapsed
+.route-instructions-toggle i {
+  transform: rotate(180deg);
+}
+
+.route-instructions-summary {
+  display: flex;
+  gap: 12px;
+  padding: 8px 10px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.route-instructions-list {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 3px 0;
+}
+
+.route-instructions-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.route-instructions-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+}
+
+.route-instruction {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.route-instruction:last-child {
+  border-bottom: none;
+}
+
+.route-instruction-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.route-instruction-text {
+  min-width: 0;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.route-instruction-distance {
+  color: #ffffff;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.route-instructions-empty {
+  padding: 14px 10px;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .route-instructions-panel {
+    top: 66px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    max-height: 48vh;
+  }
+
+  .route-instructions-list {
+    max-height: 31vh;
+  }
+}
+
 @media (max-width: 720px){
   .search-box:not(.open){ display: none; }
   .search-box.open{
@@ -1369,12 +1697,88 @@
       font-size: 16px;
     }
   }
+
+/* Highlighted point for hovered route instruction */
+.route-step-hover-marker {
+  background: transparent;
+  border: none;
+}
+
+.route-instruction {
+  cursor: pointer;
+}
+
+.route-instruction:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+
+.evacuation-selected-point i {
+  animation: fire-point-pulse 1.3s ease-in-out infinite;
+}
+
+@keyframes fire-point-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  }
+
+  50% {
+    transform: scale(1.22);
+    filter:
+      drop-shadow(0 0 4px rgba(255, 87, 34, 0.9))
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  }
+}
 </style>
 </head>
 <body>
 
 <div id="app">
   <div id="map"></div>
+
+  <!-- Route instructions panel -->
+<div id="routeInstructionsPanel" class="route-instructions-panel">
+  <div class="route-instructions-header">
+  <div class="route-instructions-title">
+    <i class="fa-solid fa-route"></i>
+    <span id="routeInstructionsDestination">
+      Route instructions
+    </span>
+  </div>
+
+  <button
+    type="button"
+    id="toggleRouteInstructionsBtn"
+    class="route-instructions-toggle"
+    aria-label="Hide route instructions"
+    aria-controls="routeInstructionsContent"
+    aria-expanded="true"
+    title="Hide route instructions"
+  >
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+</div>
+
+<div id="routeInstructionsContent" class="route-instructions-content">
+  <div class="route-instructions-content-inner">
+    <div class="route-instructions-summary">
+      <span id="routeInstructionsDistance">—</span>
+      <span id="routeInstructionsDuration">—</span>
+    </div>
+
+    <div
+      id="routeInstructionsList"
+      class="route-instructions-list"
+    ></div>
+  </div>
+</div>
+
+  
+
+  <div id="routeInstructionsList" class="route-instructions-list"></div>
+</div>
 
   <button class="sidebar-toggle" id="sidebarToggle" aria-label="Отвори менюто"><i class="fa-solid fa-bars"></i></button>
 
@@ -1531,15 +1935,47 @@
         <button class="info-btn" title="Open-Meteo current wind at 10 m above ground">i</button>
       </label>
 
-      <div class="wind-legend" id="windLegend">
-        <div class="wind-legend-title">Wind speed (km/h)</div>
-        <div class="wind-legend-row"><span class="wind-swatch" style="background:#4fc3f7"></span>&lt; 10 · calm</div>
-        <div class="wind-legend-row"><span class="wind-swatch" style="background:#66bb6a"></span>10 – 20 · light</div>
-        <div class="wind-legend-row"><span class="wind-swatch" style="background:#fdd835"></span>20 – 30 · moderate</div>
-        <div class="wind-legend-row"><span class="wind-swatch" style="background:#fb8c00"></span>30 – 45 · strong</div>
-        <div class="wind-legend-row"><span class="wind-swatch" style="background:#e53935"></span>&gt; 45 · very strong</div>
-        <div class="wind-legend-note">Arrows point in the direction the wind is blowing to.</div>
-      </div>
+      <div id="windTimelineControls" class="wind-timeline-controls">
+  <div class="wind-timeline-label">
+    Wind forecast time
+  </div>
+
+  <div class="wind-timeline-row">
+    <button
+      type="button"
+      id="windPrevHourBtn"
+      class="wind-time-btn"
+      aria-label="Previous wind forecast hour"
+      title="Previous hour"
+    >
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <button
+      type="button"
+      id="windPlayBtn"
+      class="wind-time-play-btn"
+      aria-label="Play wind forecast"
+      title="Play wind forecast"
+    >
+      <i class="fa-solid fa-play"></i>
+    </button>
+
+    <div id="windTimeDisplay" class="wind-time-display">
+      Now
+    </div>
+
+    <button
+      type="button"
+      id="windNextHourBtn"
+      class="wind-time-btn"
+      aria-label="Next wind forecast hour"
+      title="Next hour"
+    >
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
 
       <div class="date-display" id="forecastDateBtn" style="cursor:pointer;">
         <i class="fa-regular fa-calendar"></i>
@@ -1601,10 +2037,10 @@
         <span class="layer-status" id="statusModisBurnt"></span>
       </label>
       <label class="option-row">
-        <input type="checkbox" id="chkFireSeverity">
-        <span class="label-text">FIRE SEVERITY <em>(weekly updated)</em></span>
-        <span class="layer-status" id="statusFireSeverity"></span>
-      </label>
+  <input type="checkbox" id="chkFireSeverity">
+  <span class="label-text">WEEKLY BURNT AREAS <em>(weekly updated)</em></span>
+  <span class="layer-status" id="statusFireSeverity"></span>
+</label>
       <label class="option-row">
         <input type="checkbox" id="chkNrtBurnt">
         <span class="label-text">MODIS &amp; VIIRS NRT</span>
@@ -1630,6 +2066,14 @@
   </div>
 
   <div class="alerts-filters">
+    <select id="alertTimeFilter">
+      <option value="3">Last 3 hours</option>
+      <option value="6">Last 6 hours</option>
+      <option value="24">Last 24 hours</option>
+      <option value="72">Last 3 days</option>
+      <option value="168" selected>Last 7 days</option>
+    </select>
+    
     <select id="alertPriorityFilter">
       <option value="all">All priorities</option>
       <option value="high">High priority</option>
@@ -1650,6 +2094,70 @@
     </small>
   </div>
 </div>
+
+<!-- Evacuation & Response -->
+<div class="panel-header">
+  <span class="panel-header-title">
+    <i class="fa-solid fa-route"></i>
+    Evacuation &amp; Response
+  </span>
+</div>
+
+<div class="panel-body evacuation-panel-body">
+  <label class="option-row">
+    <input type="checkbox" id="layerRoads">
+    <span class="label-text">Roads</span>
+    <span class="layer-status" id="statusRoads"></span>
+  </label>
+
+  <label class="option-row">
+    <input type="checkbox" id="layerFireStations">
+    <span class="label-text">Fire stations</span>
+    <span class="layer-status" id="statusFireStations"></span>
+  </label>
+
+  <label class="option-row">
+  <input type="checkbox" id="layerHospitals">
+  <span class="label-text">Hospitals</span>
+  <span class="layer-status" id="statusHospitals"></span>
+</label>
+
+  <div id="evacuationRouteControls" class="evacuation-route-controls">
+    <label for="evacuationPoint">
+      Enter coordinates or select a point on the map.
+    </label>
+
+    <input
+      type="text"
+      id="evacuationPoint"
+      placeholder="42.6977, 23.3219"
+      autocomplete="off"
+    >
+
+    <button type="button" id="calculateFireResponseRouteBtn" class="full-btn">
+      <i class="fa-solid fa-fire"></i>
+      Calculate route to fire from nearest fire station
+    </button>
+
+    <button type="button" id="calculateEvacRouteBtn" class="full-btn">
+      <i class="fa-solid fa-fire-extinguisher"></i>
+      Calculate evacuation route to nearest fire station
+    </button>
+
+    <button type="button" id="calculateEvacRouteHospitalBtn" class="full-btn" style="margin-top:7px;">
+      <i class="fa-solid fa-hospital"></i>
+      Calculate evacuation route to nearest hospital
+    </button>
+
+    <button type="button" id="clearEvacRouteBtn" class="full-btn">
+      <i class="fa-solid fa-xmark"></i>
+      Clear route
+    </button>
+
+    <div id="evacuationRouteInfo" class="map-option-note"></div>
+  </div>
+</div>
+
   </aside>
 
   <!-- ===================== RIGHT MAP TOOLBAR ===================== -->
@@ -1991,38 +2499,86 @@
   });
 
   // ---------- Locate current position ----------
-  const locateBtn = document.getElementById('toolLocation');
-  let userLocationMarker = null;
+const locateBtn = document.getElementById('toolLocation');
+let userLocationMarker = null;
 
-  locateBtn.addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      alert('Геолокацията не се поддържа от този браузър.');
-      return;
-    }
-    locateBtn.classList.add('active-tool');
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        locateBtn.classList.remove('active-tool');
-        const latlng = [pos.coords.latitude, pos.coords.longitude];
+locateBtn?.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    alert('Геолокацията не се поддържа от този браузър.');
+    return;
+  }
 
-        if (userLocationMarker) map.removeLayer(userLocationMarker);
-        userLocationMarker = L.circleMarker(latlng, {
-          radius: 8,
-          weight: 3,
-          color: '#fff',
-          fillColor: '#2e7bf2',
-          fillOpacity: 1
-        }).addTo(map);
+  locateBtn.classList.add('active-tool');
 
-        map.setView(latlng, Math.max(map.getZoom(), 11));
-      },
-      (err) => {
-        locateBtn.classList.remove('active-tool');
-        alert('Не успяхме да определим локацията ти: ' + err.message);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  });
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      locateBtn.classList.remove('active-tool');
+
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const latlng = L.latLng(lat, lng);
+
+      if (userLocationMarker && map.hasLayer(userLocationMarker)) {
+        map.removeLayer(userLocationMarker);
+      }
+
+      userLocationMarker = L.circleMarker(latlng, {
+        radius: 8,
+        weight: 3,
+        color: '#ffffff',
+        fillColor: '#2e7bf2',
+        fillOpacity: 1
+      })
+        .bindPopup('Your current location')
+        .addTo(map);
+
+      map.setView(latlng, Math.max(map.getZoom(), 11));
+
+      // Свързване с Evacuation & Response:
+      // текущата позиция се използва като начална точка,
+      // само ако Roads е включен.
+      const roadsCheckbox = document.getElementById('layerRoads');
+
+      if (
+        roadsCheckbox?.checked &&
+        typeof setEvacuationPoint === 'function'
+      ) {
+        setEvacuationPoint(latlng, false);
+
+        if (typeof setEvacuationInfo === 'function') {
+          setEvacuationInfo(
+            'Current location selected. Choose a route type.'
+          );
+        }
+      }
+    },
+
+    (err) => {
+      locateBtn.classList.remove('active-tool');
+
+      let message = 'Не успяхме да определим локацията ти.';
+
+      if (err.code === err.PERMISSION_DENIED) {
+        message =
+          'Достъпът до локацията е отказан. Разреши Location permission за localhost в браузъра.';
+      } else if (err.code === err.POSITION_UNAVAILABLE) {
+        message =
+          'Текущата локация не е налична.';
+      } else if (err.code === err.TIMEOUT) {
+        message =
+          'Времето за намиране на локацията изтече. Опитай отново.';
+      }
+
+      alert(message);
+    },
+
+    {
+  enableHighAccuracy: false,
+  timeout: 30000,
+  maximumAge: 60000
+}
+  );
+});
 
   // ---------- Map Options: WMS layers (EFFIS / EEA / DLR), single-select ----------
   const EFFIS_GWIS_WMS = 'https://maps.effis.emergency.copernicus.eu/gwis';
@@ -2050,7 +2606,7 @@
   };
 
   function isRdaKey(key){
-    return key === 'modisActive' || key === 'viirsActive' || key === 'modisBurnt' || key === 'nrtBurnt';
+    return key === 'modisActive' || key === 'viirsActive' || key === 'modisBurnt' || key === 'nrtBurnt' || key === 'fireSeverity';
   }
 
   function createWmsLayer(key, url, wmsOptions){
@@ -2234,6 +2790,18 @@
         { color: '#3d0000', label: 'Extreme Lightning (>= 15)' }
       ]
     },
+
+    wind: {
+  title: 'Wind Field 10 m',
+  entries: [
+    { color: '#4fc3f7', label: '< 10 km/h — calm' },
+    { color: '#66bb6a', label: '10–20 km/h — light' },
+    { color: '#fdd835', label: '20–30 km/h — moderate' },
+    { color: '#fb8c00', label: '30–45 km/h — strong' },
+    { color: '#e53935', label: '> 45 km/h — very strong' }
+  ]
+},
+
     modisActive: {
       title: 'MODIS',
       entries: [
@@ -2289,7 +2857,42 @@
         { color: '#26a69a', label: 'Last 30 Days', shape: 'rect' },
         { color: '#4caf50', label: 'Fire Season', shape: 'rect' }
       ]
+    },
+
+    fireSeverity: {
+  title: 'WEEKLY BURNT AREAS',
+  entries: [
+    {
+      color: '#e53935',
+      label: 'Last 1 Day',
+      shape: 'square'
+    },
+    {
+      color: '#fb8c00',
+      label: 'Last 7 Days',
+      shape: 'square'
+    },
+    {
+      color: '#1e88e5',
+      label: 'Last 30 Days',
+      shape: 'square'
+    },
+    { color: '#7b1a1a', label: 'Last 1 Day', shape: 'rect' },
+        { color: '#a06a1a', label: 'Last 7 Days', shape: 'rect' },
+        { color: '#26a69a', label: 'Last 30 Days', shape: 'rect' },
+        { color: '#4caf50', label: 'Fire Season', shape: 'rect' }
+  ]
+},
+
+nrtBurnt: {
+  title: 'MODIS & VIIRS NRT',
+  entries: [
+    {
+      color: '#e53935',
+      label: 'Near-real-time burnt areas'
     }
+  ]
+},
   };
 
   function renderSwatch(entry){
@@ -2314,6 +2917,11 @@
     if (fireDangerChk && fireDangerChk.checked) activeKeys.push('fireDanger');
     const lightningChk = document.getElementById('lightningToggle');
     if (lightningChk && lightningChk.checked) activeKeys.push('lightning');
+    const windChk = document.getElementById('windToggle');
+
+if (windChk && windChk.checked) {
+  activeKeys.push('wind');
+}
 
     if (activeKeys.length === 0) {
       legendBody.innerHTML = '<div class="legend-empty">No layer selected</div>';
@@ -3067,19 +3675,63 @@ function dismissAlert(index) {
   updateAlertsList(filtered);
 }
 
+function parseActiveFireDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const raw = String(value).trim();
+
+  // Формат: 2026-08-23 12:30:00
+  const match = raw.match(
+    /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})(?::(\d{2}))?$/
+  );
+
+  if (match) {
+    const [
+      ,
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second = '0'
+    ] = match;
+
+    // Данните на EFFIS се интерпретират като UTC.
+    return new Date(
+      Date.UTC(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute),
+        Number(second)
+      )
+    );
+  }
+
+  const parsed = new Date(raw);
+
+  return Number.isNaN(parsed.getTime())
+    ? null
+    : parsed;
+}
+
 async function fetchActiveFiresFromWFS(source = 'modis.hs') {
   const wfsUrl = 'https://maps.effis.emergency.copernicus.eu/effis';
   const bulgariaBbox = '22.30,41.20,28.65,44.25';
 
   const params = new URLSearchParams({
-    service: 'WFS',
-    version: '1.1.0',
-    request: 'GetFeature',
-    typename: source,
-    outputFormat: 'GeoJSON',
-    bbox: `${bulgariaBbox},CRS:84`,
-    maxFeatures: '100'
-  });
+  service: 'WFS',
+  version: '1.1.0',
+  request: 'GetFeature',
+  typename: source,
+  outputFormat: 'GeoJSON',
+  bbox: bulgariaBbox,
+  CRS: 'CRS:84',
+  maxFeatures: 500,
+});
 
   const url = `${wfsUrl}?${params.toString()}`;
 
@@ -3092,8 +3744,25 @@ async function fetchActiveFiresFromWFS(source = 'modis.hs') {
 
     const data = await response.json();
 
+    console.log(
+  source,
+  'WFS features received:',
+  data.features?.length || 0,
+  'Sample properties:',
+  data.features?.[0]?.properties || null
+);
+
     const now = Date.now();
-    const threeHoursMs = 3 * 60 * 60 * 1000;
+    const alertTimeFilter = document.getElementById(
+  'alertTimeFilter'
+);
+
+const selectedHours = Number(
+  alertTimeFilter?.value || 168
+);
+
+const selectedPeriodMs =
+  selectedHours * 60 * 60 * 1000;
 
     const fires = data.features
       .map(feature => {
@@ -3113,19 +3782,28 @@ async function fetchActiveFiresFromWFS(source = 'modis.hs') {
           return null;
         }
 
-        const dateRaw = props.acq_at || props.ACQ_AT;
+        const dateRaw =
+  props.acq_at ||
+  props.ACQ_AT ||
+  props.acqat ||
+  props.ACQAT ||
+  props.acq_date ||
+  props.ACQ_DATE ||
+  props.datetime ||
+  props.DATETIME ||
+  props.date ||
+  props.DATE ||
+  props.time ||
+  props.TIME ||
+  props.timestamp ||
+  props.TIMESTAMP ||
+  null;
 
-        let detectedAt;
+        const detectedAt = parseActiveFireDate(dateRaw);
 
-        if (dateRaw) {
-          detectedAt = new Date(dateRaw);
-        } else {
-          detectedAt = null;
-        }
-
-        if (!detectedAt || isNaN(detectedAt.getTime())) {
-          return null;
-        }
+if (!detectedAt || isNaN(detectedAt.getTime())) {
+  return null;
+}
 
         const confidence = props.confidence || 'Medium';
         const satellite = source.includes('viirs') ? 'VIIRS' : 'MODIS';
@@ -3145,10 +3823,10 @@ async function fetchActiveFiresFromWFS(source = 'modis.hs') {
         if (!fire) return false;
 
         const ageMs = now - fire.detectedAt.getTime();
-        return ageMs <= threeHoursMs;
+        return ageMs >= 0 && ageMs <= selectedPeriodMs;
       });
 
-    console.log(`${source}: Found ${fires.length} active fires in Bulgaria (last 3h)`);
+    console.log(`${source}: Found ${fires.length} active fires in Bulgaria ` + `(last ${selectedHours}h)`);
 
     return fires;
 
@@ -3196,21 +3874,80 @@ function parseEffisDate(dateStr) {
 }
 
 async function refreshAlerts() {
-  const modisFires = await fetchActiveFiresFromWFS('modis.hs');
+  const modisCheckbox = document.getElementById(
+    'chkModisActive'
+  );
 
-  activeFireAlerts = modisFires.map(fire => ({
-    ...fire,
-    priority: getAlertPriority(fire)
-  }));
+  const viirsCheckbox = document.getElementById(
+    'chkViirsActive'
+  );
 
-  const priorityFilter = document.getElementById('alertPriorityFilter').value;
-  const filtered = filterAlertsByPriority(priorityFilter);
+  const viirsSourceSelect = document.getElementById(
+    'viirsSourceSelect'
+  );
+
+  const tasks = [];
+
+  // Зареждай MODIS само ако слоят MODIS е включен.
+  if (modisCheckbox?.checked) {
+    tasks.push(
+      fetchActiveFiresFromWFS('modis.hs')
+    );
+  }
+
+  // Зареждай VIIRS само ако VIIRS слоят е включен.
+  if (viirsCheckbox?.checked) {
+    const selectedSource =
+      viirsSourceSelect?.value || 'VIIRS all';
+
+    let viirsLayer = 'viirs.hs';
+
+    if (selectedSource.includes('Suomi')) {
+      viirsLayer = 'suomi.hs';
+    } else if (selectedSource.includes('NOAA-20')) {
+      viirsLayer = 'noaa.hs';
+    }
+
+    tasks.push(
+      fetchActiveFiresFromWFS(viirsLayer)
+    );
+  }
+
+  // Ако нито един слой не е избран, по подразбиране пробвай и двата.
+  if (!tasks.length) {
+    tasks.push(
+      fetchActiveFiresFromWFS('modis.hs'),
+      fetchActiveFiresFromWFS('viirs.hs')
+    );
+  }
+
+  const results = await Promise.all(tasks);
+
+  activeFireAlerts = results
+    .flat()
+    .map(fire => ({
+      ...fire,
+      priority: getAlertPriority(fire)
+    }))
+    .sort(
+      (a, b) => b.detectedAt - a.detectedAt
+    );
+
+  const priorityFilter = document.getElementById(
+    'alertPriorityFilter'
+  );
+
+  const filtered = filterAlertsByPriority(
+    priorityFilter?.value || 'all'
+  );
+
   updateAlertsList(filtered);
 }
 
 function setupAlertsPanel() {
   const refreshBtn = document.getElementById('alertsRefreshBtn');
   const priorityFilter = document.getElementById('alertPriorityFilter');
+  const timeFilter = document.getElementById('alertTimeFilter');
 
   if (refreshBtn) {
     refreshBtn.addEventListener('click', refreshAlerts);
@@ -3222,6 +3959,12 @@ function setupAlertsPanel() {
       updateAlertsList(filtered);
     });
   }
+
+  if (timeFilter) {
+  timeFilter.addEventListener('change', async function() {
+    await refreshAlerts();
+  });
+}
 
   document.getElementById('alertsList').addEventListener('click', function (e) {
     const button = e.target.closest('button');
@@ -3530,27 +4273,49 @@ if (typeof map !== 'undefined') {
   let currentRange = computeRange('1d');
   const rdaActiveLayers = {};
 
-  function buildRdaLayer(key){
-    let url, layerName;
+  function buildRdaLayer(key) {
+  let url, layerName;
 
-    if (key === 'modisActive') { url = RDA_GWIS; layerName = 'modis.hs'; }
-    else if (key === 'viirsActive') { url = RDA_GWIS; layerName = viirsLayerName(); }
-    else if (key === 'modisBurnt') { url = RDA_EFFIS; layerName = 'modis.ba'; }
-    else if (key === 'nrtBurnt') { url = RDA_EFFIS; layerName = 'effis.nrt.ba'; }
-    else return null;
+  if (key === 'modisActive') {
+    url = RDA_GWIS;
+    layerName = 'modis.hs';
 
-    const wmsOptions = {
-      layers: layerName,
-      format: 'image/png',
-      transparent: true,
-      singletile: false,
-      version: '1.1.1',
-      time: timeParamFor(currentRange),
-      attribution: 'EFFIS Rapid Damage Assessment &copy; Copernicus EMS / JRC'
-    };
+  } else if (key === 'viirsActive') {
+    url = RDA_GWIS;
+    layerName = viirsLayerName();
 
-    return createWmsLayer(key, url, wmsOptions);
+  } else if (key === 'modisBurnt') {
+    url = RDA_EFFIS;
+    layerName = 'modis.ba';
+
+  } else if (key === 'nrtBurnt') {
+    url = RDA_EFFIS;
+    layerName = 'effis.nrt.ba';
+
+  } else if (key === 'fireSeverity') {
+    url = RDA_EFFIS;
+    layerName = 'modis.ba.week';
+
+  } else {
+    return null;
   }
+
+  const wmsOptions = {
+    layers: layerName,
+    format: 'image/png',
+    transparent: true,
+    singletile: false,
+    version: '1.1.1',
+    attribution:
+      'EFFIS Rapid Damage Assessment &copy; Copernicus EMS / JRC'
+  };
+
+  if (key !== 'fireSeverity') {
+    wmsOptions.time = timeParamFor(currentRange);
+  }
+
+  return createWmsLayer(key, url, wmsOptions);
+}
 
   function toggleRdaLayer(key, checked){
     if (rdaActiveLayers[key]) {
@@ -3587,13 +4352,11 @@ if (typeof map !== 'undefined') {
   });
   document.getElementById('chkModisBurnt').addEventListener('change', e => toggleRdaLayer('modisBurnt', e.target.checked));
   document.getElementById('chkNrtBurnt').addEventListener('change', e => toggleRdaLayer('nrtBurnt', e.target.checked));
+  document.getElementById('chkFireSeverity').addEventListener(
+  'change',
+  e => toggleRdaLayer('fireSeverity', e.target.checked)
+);
 
-  // FIRE SEVERITY: няма потвърден публичен WMS слой за този продукт - остава изключен (тихо)
-  document.getElementById('chkFireSeverity').addEventListener('change', function(){
-    if (this.checked) {
-      this.checked = false;
-    }
-  });
 
   // Бутони за бърз диапазон (Last 1/7/30 Days + Fire Season) - единствен избор помежду им
   const rdaRangeButtons = document.querySelectorAll('.quick-range button, #rdaFireSeasonBtn');
@@ -3851,6 +4614,53 @@ if (typeof map !== 'undefined') {
     'Anomaly', 'Ranking'
   ];
 
+  const FIRE_CHART_API_KEYS = {
+  'Fire Weather index (FWI)': 'fwi',
+  'Initial Spread Index (ISI)': 'isi',
+  'Built Up Index (BUI)': 'bui',
+  'Fine Fuel Moisture Code (FFMC)': 'ffmc',
+  'Duff Moisture Code (DMC)': 'dmc',
+  'Drought Code (DC)': 'dc',
+  'Anomaly': 'anomaly index',
+  'Ranking': 'ranking index'
+};
+
+const FIRE_CHART_MODELS = {
+  'ECMWF (8 km res.)': 'ecmwf',
+
+  // Временно; потвърди с Network от официалния Viewer,
+  // когато избереш Meteo France там.
+  'Meteo France (10 km res.)': 'mf'
+};
+
+  const EFFIS_BURNT_AREA_CHART_API =
+  'https://api.effis.emergency.copernicus.eu/rest/2/burntareas/charts/wms';
+
+  async function testEffisChartApi() {
+  const testUrl =
+    'https://api.effis.emergency.copernicus.eu/rest/2/burntareas/charts/wms' +
+    '?model=ecmwf' +
+    '&day_gte=2026-08-21' +
+    '&day_lte=2026-09-01' +
+    '&point=(22.716484998114932%2043.939781509522504)';
+
+  try {
+    const response = await fetch(testUrl);
+
+    console.log('EFFIS API status:', response.status);
+    console.log('EFFIS API content type:', response.headers.get('content-type'));
+
+    const data = await response.json();
+
+    console.log('EFFIS API JSON response:', data);
+
+  } catch (error) {
+    console.error('EFFIS API test failed:', error);
+  }
+}
+
+
+
   let fireChartInstances = {};
   let fireChartCoord = null;   // [lng, lat]
   let fireChartBaseDate = null;
@@ -3880,25 +4690,7 @@ if (typeof map !== 'undefined') {
     return dates;
   }
 
-  async function fireChartFetchValue(url, layerName, lng, lat, dateStr){
-    const delta = 0.05;
-    const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
-    const qUrl = `${url}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=${layerName}&QUERY_LAYERS=${layerName}&SRS=EPSG:4326&BBOX=${bbox}&WIDTH=3&HEIGHT=3&X=1&Y=1&INFO_FORMAT=application/json&FEATURE_COUNT=1&TIME=${dateStr}`;
-    try {
-      const resp = await fetch(qUrl);
-      if (!resp.ok) return null;
-      const data = await resp.json();
-      const feature = data.features && data.features[0];
-      if (!feature) return null;
-      const props = feature.properties || {};
-      const candidates = ['value', 'VALUE', 'gray_index', 'GRAY_INDEX', 'band1', 'pixel'];
-      for (const k of candidates) if (props[k] != null && !isNaN(parseFloat(props[k]))) return parseFloat(props[k]);
-      const firstNumeric = Object.values(props).find(v => v !== '' && v != null && !isNaN(parseFloat(v)));
-      return firstNumeric != null ? parseFloat(firstNumeric) : null;
-    } catch (e) {
-      return null;
-    }
-  }
+  
 
   function fireChartRender(indexLabel, dates, values){
     const canvasId = fireChartCanvasId(indexLabel);
@@ -3936,36 +4728,113 @@ if (typeof map !== 'undefined') {
     });
   }
 
-  async function fireChartLoadIndex(indexLabel){
-    const sourceLabel = document.getElementById('fireChartSource').value;
-    const url = FORECAST_SOURCE_URLS[sourceLabel] || FORECAST_SOURCE_URLS['ECMWF (8 km res.)'];
-    const layerMap = INDEX_LAYER_MAP[sourceLabel] || INDEX_LAYER_MAP['ECMWF (8 km res.)'];
-    const layerName = layerMap[indexLabel];
-    const dates = fireChartDateRange(fireChartBaseDate);
-    const [lng, lat] = fireChartCoord;
-    const values = await Promise.all(dates.map(d => fireChartFetchValue(url, layerName, lng, lat, isoDate(d))));
-    return { dates, values };
+  async function fireChartLoadIndex(indexLabel) {
+  const sourceLabel = document.getElementById('fireChartSource').value;
+  const model = FIRE_CHART_MODELS[sourceLabel];
+
+  if (!model) {
+    throw new Error(`Unknown chart source: ${sourceLabel}`);
   }
 
-  async function fireChartRenderAll(){
-    if (!fireChartCoord) return;
-    FIRE_CHART_INDICES.forEach(async (idx) => {
-      const wrap = document.getElementById('wrap_' + fireChartCanvasId(idx));
-      const statusEl = wrap ? wrap.querySelector('.fire-chart-status') : null;
-      if (statusEl) statusEl.textContent = 'Зарежда се…';
-      try {
-        const { dates, values } = await fireChartLoadIndex(idx);
-        if (values.every(v => v == null)) {
-          if (statusEl) statusEl.textContent = 'Няма данни';
-        } else {
-          if (statusEl) statusEl.textContent = '';
-          fireChartRender(idx, dates, values);
-        }
-      } catch (e) {
-        if (statusEl) statusEl.textContent = 'Грешка';
-      }
-    });
+  const apiKey = FIRE_CHART_API_KEYS[indexLabel];
+
+  if (!apiKey) {
+    throw new Error(`Unknown EFFIS chart index: ${indexLabel}`);
   }
+
+  const dates = fireChartDateRange(fireChartBaseDate);
+  const from = isoDate(dates[0]);
+  const to = isoDate(dates[dates.length - 1]);
+
+  const [lng, lat] = fireChartCoord;
+
+  const params = new URLSearchParams({
+    model,
+    day_gte: from,
+    day_lte: to,
+    point: `(${lng} ${lat})`
+  });
+
+  const requestUrl =
+    `${EFFIS_BURNT_AREA_CHART_API}?${params.toString()}`;
+
+  const response = await fetch(requestUrl);
+
+  if (!response.ok) {
+    throw new Error(`EFFIS chart API returned HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  const values = data.y_data
+    ? data.y_data[apiKey]
+    : null;
+
+  if (!Array.isArray(values)) {
+    throw new Error(
+      `EFFIS API did not return "${apiKey}" for ${sourceLabel}`
+    );
+  }
+
+  // API-то връща ISO дати във формат 2026-08-21T00:00:00.
+  // Правим ги Date обекти за Chart.js.
+  const apiDates = Array.isArray(data.x_data)
+    ? data.x_data.map(dateText => new Date(dateText))
+    : dates;
+
+  return {
+    dates: apiDates,
+    values
+  };
+}
+
+  async function fireChartRenderAll() {
+  if (!fireChartCoord) return;
+
+  FIRE_CHART_INDICES.forEach(async indexLabel => {
+    const wrap = document.getElementById(
+      'wrap_' + fireChartCanvasId(indexLabel)
+    );
+
+    const statusEl = wrap
+      ? wrap.querySelector('.fire-chart-status')
+      : null;
+
+    if (statusEl) {
+      statusEl.textContent = 'Зарежда се…';
+    }
+
+    try {
+      const { dates, values } = await fireChartLoadIndex(
+        indexLabel
+      );
+
+      if (!values || values.every(value => value == null)) {
+        if (statusEl) {
+          statusEl.textContent = 'Няма данни';
+        }
+        return;
+      }
+
+      if (statusEl) {
+        statusEl.textContent = '';
+      }
+
+      fireChartRender(indexLabel, dates, values);
+
+    } catch (error) {
+      console.error(
+        'Fire chart failed:',
+        indexLabel,
+        error
+      );
+
+      if (statusEl) {
+        statusEl.textContent = 'Грешка при зареждане';
+      }
+    }
+  });
+}
 
   function openFireDangerChart(feature){
     if (!feature || !feature.centroid) return;
@@ -4375,12 +5244,20 @@ document.addEventListener('click', function(e){
 
 // ---------- WIND FIELD ----------
 const WIND_API = 'https://api.open-meteo.com/v1/forecast';
-const WIND_BBOX = { south: 41.10, north: 44.30, west: 22.20, east: 28.75 };
+const WIND_BBOX = {
+  south: 41.10,
+  north: 44.30,
+  west: 22.20,
+  east: 28.75
+};
+
 const WIND_TARGET_COLS = 9;
 const WIND_TARGET_ROWS = 7;
 const WIND_MAX_POINTS = 90;
 const WIND_REFRESH_MS = 15 * 60 * 1000;
 const WIND_MOVE_DEBOUNCE_MS = 600;
+const WIND_FORECAST_HOURS = 24;
+const WIND_PLAY_INTERVAL_MS = 1200;
 
 let windLayerGroup = null;
 let windEnabled = false;
@@ -4388,18 +5265,44 @@ let windRequestId = 0;
 let windMoveTimer = null;
 let windRefreshTimer = null;
 
+let windForecastIndex = 0;
+let windForecastTimes = [];
+let windIsPlaying = false;
+let windPlayTimer = null;
+
 const windToggleEl = document.getElementById('windToggle');
 const windStatusEl = document.getElementById('statusWind');
-const windLegendEl = document.getElementById('windLegend');
 
-function windSetStatus(text, isError){
-  if (!windStatusEl) return;
+const windTimelineControlsEl = document.getElementById(
+  'windTimelineControls'
+);
+
+const windTimeDisplayEl = document.getElementById(
+  'windTimeDisplay'
+);
+
+const windPrevHourBtn = document.getElementById(
+  'windPrevHourBtn'
+);
+
+const windNextHourBtn = document.getElementById(
+  'windNextHourBtn'
+);
+
+const windPlayBtn = document.getElementById(
+  'windPlayBtn'
+);
+
+function windSetStatus(text, isError) {
+  if (!windStatusEl) {
+    return;
+  }
 
   windStatusEl.textContent = text || '';
   windStatusEl.style.color = isError ? '#c0392b' : '';
 }
 
-function windColor(speed){
+function windColor(speed) {
   if (speed > 45) return '#e53935';
   if (speed > 30) return '#fb8c00';
   if (speed > 20) return '#fdd835';
@@ -4407,7 +5310,7 @@ function windColor(speed){
   return '#4fc3f7';
 }
 
-function windArrowScale(speed){
+function windArrowScale(speed) {
   if (speed > 45) return 1.25;
   if (speed > 30) return 1.15;
   if (speed > 20) return 1.05;
@@ -4415,30 +5318,126 @@ function windArrowScale(speed){
   return 0.85;
 }
 
-/* Build a grid of sample points limited to the visible area and Bulgaria */
-function windBuildGrid(){
-  const b = map.getBounds();
+function windFormatTime(isoTime) {
+  if (!isoTime) {
+    return 'Now';
+  }
 
-  const south = Math.max(b.getSouth(), WIND_BBOX.south);
-  const north = Math.min(b.getNorth(), WIND_BBOX.north);
-  const west  = Math.max(b.getWest(),  WIND_BBOX.west);
-  const east  = Math.min(b.getEast(),  WIND_BBOX.east);
+  const date = new Date(isoTime);
 
-  if (north <= south || east <= west) return [];
+  if (Number.isNaN(date.getTime())) {
+    return isoTime;
+  }
 
-  const cols = WIND_TARGET_COLS;
-  const rows = WIND_TARGET_ROWS;
+  const now = new Date();
+  const sameDay =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
 
-  const stepLon = (east - west) / cols;
-  const stepLat = (north - south) / rows;
+  const hourText = date.toLocaleTimeString('bg-BG', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  if (sameDay) {
+    return `Today · ${hourText}`;
+  }
+
+  const dayText = date.toLocaleDateString('bg-BG', {
+    day: '2-digit',
+    month: '2-digit'
+  });
+
+  return `${dayText} · ${hourText}`;
+}
+
+function windUpdateTimelineUI() {
+  if (windTimeDisplayEl) {
+    const time = windForecastTimes[windForecastIndex];
+    windTimeDisplayEl.textContent = windFormatTime(time);
+  }
+
+  if (windPrevHourBtn) {
+    windPrevHourBtn.disabled = windForecastIndex <= 0;
+  }
+
+  if (windNextHourBtn) {
+    windNextHourBtn.disabled =
+      windForecastIndex >= windForecastTimes.length - 1;
+  }
+
+  if (windPlayBtn) {
+    windPlayBtn.classList.toggle(
+      'playing',
+      windIsPlaying
+    );
+
+    windPlayBtn.innerHTML = windIsPlaying
+      ? '<i class="fa-solid fa-pause"></i>'
+      : '<i class="fa-solid fa-play"></i>';
+
+    windPlayBtn.setAttribute(
+      'aria-label',
+      windIsPlaying
+        ? 'Pause wind forecast'
+        : 'Play wind forecast'
+    );
+
+    windPlayBtn.setAttribute(
+      'title',
+      windIsPlaying
+        ? 'Pause wind forecast'
+        : 'Play wind forecast'
+    );
+  }
+}
+
+/* Build a grid of sample points limited to visible Bulgaria area. */
+function windBuildGrid() {
+  const bounds = map.getBounds();
+
+  const south = Math.max(
+    bounds.getSouth(),
+    WIND_BBOX.south
+  );
+
+  const north = Math.min(
+    bounds.getNorth(),
+    WIND_BBOX.north
+  );
+
+  const west = Math.max(
+    bounds.getWest(),
+    WIND_BBOX.west
+  );
+
+  const east = Math.min(
+    bounds.getEast(),
+    WIND_BBOX.east
+  );
+
+  if (north <= south || east <= west) {
+    return [];
+  }
+
+  const stepLon = (east - west) / WIND_TARGET_COLS;
+  const stepLat = (north - south) / WIND_TARGET_ROWS;
 
   const points = [];
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+  for (let row = 0; row < WIND_TARGET_ROWS; row++) {
+    for (let col = 0; col < WIND_TARGET_COLS; col++) {
       points.push({
-        lat: +(south + stepLat * (r + 0.5)).toFixed(4),
-        lng: +(west + stepLon * (c + 0.5)).toFixed(4)
+        lat: +(
+          south +
+          stepLat * (row + 0.5)
+        ).toFixed(4),
+
+        lng: +(
+          west +
+          stepLon * (col + 0.5)
+        ).toFixed(4)
       });
     }
   }
@@ -4446,95 +5445,218 @@ function windBuildGrid(){
   return points.slice(0, WIND_MAX_POINTS);
 }
 
-async function windFetch(points, reqId){
+async function windFetch(points, reqId) {
   const params = new URLSearchParams({
-    latitude: points.map(p => p.lat).join(','),
-    longitude: points.map(p => p.lng).join(','),
-    current: 'wind_speed_10m,wind_direction_10m,wind_gusts_10m',
+    latitude: points.map(point => point.lat).join(','),
+    longitude: points.map(point => point.lng).join(','),
+
+    hourly:
+      'wind_speed_10m,' +
+      'wind_direction_10m,' +
+      'wind_gusts_10m',
+
+    forecast_days: '2',
     wind_speed_unit: 'kmh',
-    timezone: 'UTC'
+    timezone: 'Europe/Sofia'
   });
 
-  const response = await fetch(WIND_API + '?' + params.toString());
+  const response = await fetch(
+    WIND_API + '?' + params.toString()
+  );
 
-  if (!response.ok) throw new Error('Open-Meteo error: ' + response.status);
+  if (!response.ok) {
+    throw new Error(
+      'Open-Meteo error: ' + response.status
+    );
+  }
 
   const data = await response.json();
 
-  if (reqId !== windRequestId) return [];
+  if (reqId !== windRequestId) {
+    return {
+      times: [],
+      points: []
+    };
+  }
 
-  // Single point returns an object, multiple points return an array
   const list = Array.isArray(data) ? data : [data];
 
-  return list.map((entry, i) => {
-    const cur = entry.current || {};
+  const firstHourly = list[0]?.hourly || {};
+  const allTimes = Array.isArray(firstHourly.time)
+    ? firstHourly.time
+    : [];
 
-    if (cur.wind_speed_10m === undefined || cur.wind_direction_10m === undefined) {
+  const times = allTimes.slice(0, WIND_FORECAST_HOURS);
+
+  const windPoints = list.map((entry, index) => {
+    const hourly = entry.hourly || {};
+
+    if (
+      !Array.isArray(hourly.wind_speed_10m) ||
+      !Array.isArray(hourly.wind_direction_10m)
+    ) {
       return null;
     }
 
     return {
-      lat: entry.latitude !== undefined ? entry.latitude : points[i].lat,
-      lng: entry.longitude !== undefined ? entry.longitude : points[i].lng,
-      speed: cur.wind_speed_10m,
-      gust: cur.wind_gusts_10m,
-      direction: cur.wind_direction_10m
+      lat: entry.latitude !== undefined
+        ? entry.latitude
+        : points[index].lat,
+
+      lng: entry.longitude !== undefined
+        ? entry.longitude
+        : points[index].lng,
+
+      speeds: hourly.wind_speed_10m.slice(
+        0,
+        WIND_FORECAST_HOURS
+      ),
+
+      directions: hourly.wind_direction_10m.slice(
+        0,
+        WIND_FORECAST_HOURS
+      ),
+
+      gusts: Array.isArray(hourly.wind_gusts_10m)
+        ? hourly.wind_gusts_10m.slice(
+            0,
+            WIND_FORECAST_HOURS
+          )
+        : []
     };
   }).filter(Boolean);
+
+  return {
+    times,
+    points: windPoints
+  };
 }
 
-function windCreateArrow(point){
+function windCreateArrow(point) {
   const color = windColor(point.speed);
   const scale = windArrowScale(point.speed);
 
-  // wind_direction_10m is the direction the wind comes FROM,
-  // so the arrow must point 180 degrees the other way
+  // Wind direction is where wind comes FROM.
+  // The visible arrow points where wind is going TO.
   const rotation = (point.direction + 180) % 360;
 
   const html =
-    '<div class="wind-arrow" style="transform: rotate(' + rotation + 'deg) scale(' + scale + '); color:' + color + '">' +
+    '<div class="wind-arrow" style="' +
+      'transform:rotate(' + rotation + 'deg) ' +
+      'scale(' + scale + ');' +
+      'color:' + color + '">' +
       '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
         '<path d="M12 21 L12 4" stroke="currentColor" stroke-width="2.6" ' +
-              'stroke-linecap="round" fill="none"/>' +
+          'stroke-linecap="round" fill="none"/>' +
         '<path d="M6.6 10.2 L12 3.4 L17.4 10.2" stroke="currentColor" stroke-width="2.6" ' +
-              'stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+          'stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
       '</svg>' +
     '</div>';
 
-  const marker = L.marker([point.lat, point.lng], {
-    icon: L.divIcon({
-      className: 'wind-arrow-icon',
-      html: html,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    }),
-    interactive: true,
-    keyboard: false
-  });
+  const marker = L.marker(
+    [point.lat, point.lng],
+    {
+      icon: L.divIcon({
+        className: 'wind-arrow-icon',
+        html,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      }),
+      interactive: true,
+      keyboard: false
+    }
+  );
 
-  const gustText = (point.gust !== undefined && point.gust !== null)
-    ? '<br>Gusts: <strong>' + Math.round(point.gust) + ' km/h</strong>'
+  const gustText = Number.isFinite(point.gust)
+    ? '<br>Gusts: <strong>' +
+      Math.round(point.gust) +
+      ' km/h</strong>'
+    : '';
+
+  const timeText = point.time
+    ? '<br>Time: <strong>' +
+      windFormatTime(point.time) +
+      '</strong>'
     : '';
 
   marker.bindTooltip(
-    'Wind: <strong>' + Math.round(point.speed) + ' km/h</strong>' +
-    '<br>From: <strong>' + Math.round(point.direction) + '&deg;</strong>' +
+    'Wind: <strong>' +
+      Math.round(point.speed) +
+      ' km/h</strong>' +
+    '<br>From: <strong>' +
+      Math.round(point.direction) +
+      '&deg;</strong>' +
     gustText +
-    '<br>' + point.lat.toFixed(3) + ', ' + point.lng.toFixed(3),
-    { direction: 'top', offset: [0, -8], sticky: false }
+    timeText +
+    '<br>' +
+    point.lat.toFixed(3) +
+    ', ' +
+    point.lng.toFixed(3),
+    {
+      direction: 'top',
+      offset: [0, -8],
+      sticky: false
+    }
   );
 
   return marker;
 }
 
-async function windRefresh(){
-  if (!windEnabled) return;
+function windRenderForecastFrame(forecastPoints) {
+  if (!windLayerGroup) {
+    return;
+  }
+
+  const time = windForecastTimes[windForecastIndex];
+
+  windLayerGroup.clearLayers();
+
+  forecastPoints.forEach(point => {
+    const speed = Number(point.speeds[windForecastIndex]);
+    const direction = Number(
+      point.directions[windForecastIndex]
+    );
+
+    const gust = Number(point.gusts[windForecastIndex]);
+
+    if (
+      !Number.isFinite(speed) ||
+      !Number.isFinite(direction)
+    ) {
+      return;
+    }
+
+    windLayerGroup.addLayer(
+      windCreateArrow({
+        lat: point.lat,
+        lng: point.lng,
+        speed,
+        direction,
+        gust: Number.isFinite(gust) ? gust : null,
+        time
+      })
+    );
+  });
+
+  windUpdateTimelineUI();
+}
+
+async function windRefresh() {
+  if (!windEnabled) {
+    return;
+  }
 
   const reqId = ++windRequestId;
-  const points = windBuildGrid();
+  const gridPoints = windBuildGrid();
 
-  if (points.length === 0) {
-    if (windLayerGroup) windLayerGroup.clearLayers();
+  if (!gridPoints.length) {
+    if (windLayerGroup) {
+      windLayerGroup.clearLayers();
+    }
+
+    windForecastTimes = [];
+    windForecastIndex = 0;
+    windUpdateTimelineUI();
     windSetStatus('outside area');
     return;
   }
@@ -4542,67 +5664,1943 @@ async function windRefresh(){
   windSetStatus('loading...');
 
   try {
-    const data = await windFetch(points, reqId);
+    const result = await windFetch(
+      gridPoints,
+      reqId
+    );
 
-    if (reqId !== windRequestId || !windEnabled) return;
+    if (
+      reqId !== windRequestId ||
+      !windEnabled
+    ) {
+      return;
+    }
 
-    windLayerGroup.clearLayers();
+    windForecastTimes = result.times;
+    windForecastIndex = Math.min(
+      windForecastIndex,
+      Math.max(0, windForecastTimes.length - 1)
+    );
 
-    data.forEach(p => windLayerGroup.addLayer(windCreateArrow(p)));
+    if (
+      !windForecastTimes.length ||
+      !result.points.length
+    ) {
+      throw new Error(
+        'No hourly wind forecast returned.'
+      );
+    }
 
-    windSetStatus(data.length + ' pts');
-  } catch (err) {
-    console.error('Wind field failed:', err);
+    // Save the latest forecast data for timeline buttons.
+    windLayerGroup._windForecastPoints = result.points;
 
-    if (reqId === windRequestId) windSetStatus('error', true);
+    windRenderForecastFrame(result.points);
+
+    windSetStatus(
+      result.points.length + ' pts'
+    );
+  } catch (error) {
+    console.error('Wind field failed:', error);
+
+    if (reqId === windRequestId) {
+      windSetStatus('error', true);
+    }
   }
 }
 
-function windEnable(){
+function windSetForecastIndex(nextIndex) {
+  if (
+    !windLayerGroup ||
+    !Array.isArray(
+      windLayerGroup._windForecastPoints
+    ) ||
+    !windForecastTimes.length
+  ) {
+    return;
+  }
+
+  windForecastIndex = Math.max(
+    0,
+    Math.min(
+      nextIndex,
+      windForecastTimes.length - 1
+    )
+  );
+
+  windRenderForecastFrame(
+    windLayerGroup._windForecastPoints
+  );
+}
+
+function windStopPlayback() {
+  windIsPlaying = false;
+
+  clearInterval(windPlayTimer);
+  windPlayTimer = null;
+
+  windUpdateTimelineUI();
+}
+
+function windStartPlayback() {
+  if (!windForecastTimes.length) {
+    return;
+  }
+
+  windIsPlaying = true;
+  windUpdateTimelineUI();
+
+  clearInterval(windPlayTimer);
+
+  windPlayTimer = setInterval(() => {
+    if (
+      windForecastIndex >=
+      windForecastTimes.length - 1
+    ) {
+      windSetForecastIndex(0);
+    } else {
+      windSetForecastIndex(
+        windForecastIndex + 1
+      );
+    }
+  }, WIND_PLAY_INTERVAL_MS);
+}
+
+function windEnable() {
   windEnabled = true;
 
-  if (!windLayerGroup) windLayerGroup = L.layerGroup();
+  if (!windLayerGroup) {
+    windLayerGroup = L.layerGroup();
+  }
 
   windLayerGroup.addTo(map);
-  if (windLegendEl) windLegendEl.classList.add('visible');
+
+  if (windTimelineControlsEl) {
+    windTimelineControlsEl.classList.add('visible');
+  }
 
   windRefresh();
 
-  clearInterval(windRefreshTimer);
-  windRefreshTimer = setInterval(windRefresh, WIND_REFRESH_MS);
+  if (typeof updateLegend === 'function') {
+  updateLegend();
 }
 
-function windDisable(){
+  clearInterval(windRefreshTimer);
+
+  windRefreshTimer = setInterval(
+    windRefresh,
+    WIND_REFRESH_MS
+  );
+}
+
+function windDisable() {
   windEnabled = false;
   windRequestId++;
 
   clearInterval(windRefreshTimer);
   clearTimeout(windMoveTimer);
+  windStopPlayback();
 
   if (windLayerGroup) {
     windLayerGroup.clearLayers();
-    map.removeLayer(windLayerGroup);
+
+    if (map.hasLayer(windLayerGroup)) {
+      map.removeLayer(windLayerGroup);
+    }
+
+    delete windLayerGroup._windForecastPoints;
   }
 
-  if (windLegendEl) windLegendEl.classList.remove('visible');
+  windForecastTimes = [];
+  windForecastIndex = 0;
+
+  if (windTimelineControlsEl) {
+    windTimelineControlsEl.classList.remove('visible');
+  }
 
   windSetStatus('');
+
+  if (typeof updateLegend === 'function') {
+  updateLegend();
+}
 }
 
-windToggleEl.addEventListener('change', function(){
-  if (this.checked) {
-    windEnable();
-  } else {
-    windDisable();
+windToggleEl?.addEventListener(
+  'change',
+  function() {
+    if (this.checked) {
+      windEnable();
+    } else {
+      windDisable();
+    }
   }
-});
+);
 
-map.on('moveend zoomend', function(){
-  if (!windEnabled) return;
+windPrevHourBtn?.addEventListener(
+  'click',
+  function() {
+    windStopPlayback();
+    windSetForecastIndex(windForecastIndex - 1);
+  }
+);
+
+windNextHourBtn?.addEventListener(
+  'click',
+  function() {
+    windStopPlayback();
+    windSetForecastIndex(windForecastIndex + 1);
+  }
+);
+
+windPlayBtn?.addEventListener(
+  'click',
+  function() {
+    if (windIsPlaying) {
+      windStopPlayback();
+    } else {
+      windStartPlayback();
+    }
+  }
+);
+
+map.on('moveend zoomend', function() {
+  if (!windEnabled) {
+    return;
+  }
 
   clearTimeout(windMoveTimer);
-  windMoveTimer = setTimeout(windRefresh, WIND_MOVE_DEBOUNCE_MS);
+
+  windMoveTimer = setTimeout(
+    windRefresh,
+    WIND_MOVE_DEBOUNCE_MS
+  );
 });
+
+
+// ---------- EVACUATION & RESPONSE ----------
+
+const evacuationLayers = {
+  roads: null,
+  fireStations: null,
+  hospitals: null
+};
+
+let evacuationStationsData = [];
+let evacuationHospitalsData = [];
+let evacuationSelectedPoint = null;
+let evacuationPointMarker = null;
+let evacuationRouteLayer = null;
+let routeStepHoverMarker = null;
+let evacuationStationHighlight = null;
+
+// координати на пожарни станции
+const FIRE_STATIONS_GEOJSON_URL = 'fire-stations.geojson';
+
+// координати на болници
+const HOSPITALS_GEOJSON_URL = 'hospitals.geojson';
+
+function evacuationSetStatus(id, icon, color) {
+  const element = document.getElementById(id);
+
+  if (!element) {
+    return;
+  }
+
+  element.innerHTML = icon
+    ? `<i class="fa-solid ${icon}" style="color:${color};"></i>`
+    : '';
+}
+
+function evacuationCreateStationIcon(isHighlighted = false) {
+  const color = isHighlighted ? '#2e9e3f' : '#e53935';
+
+  return L.divIcon({
+    className: 'evacuation-station-marker',
+    html: `
+      <i class="fa-solid fa-fire-extinguisher"
+         style="color:${color}; font-size:${isHighlighted ? 20 : 16}px;">
+      </i>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+}
+
+function evacuationCreatePointIcon() {
+  return L.divIcon({
+    className: 'evacuation-selected-point',
+    html: `
+      <i class="fa-solid fa-fire"
+         style="color:red; font-size:22px;">
+      </i>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 22]
+  });
+}
+
+// В този проект Roads използва настоящата OSM карта,
+// защото картата вече визуализира пътищата.
+function loadEvacuationRoadsLayer() {
+  if (evacuationLayers.roads) {
+    return evacuationLayers.roads;
+  }
+
+  evacuationLayers.roads = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '© OpenStreetMap',
+      maxZoom: 19,
+      opacity: 0.6
+    }
+  );
+
+  return evacuationLayers.roads;
+}
+
+function getFireStationCoordinates(feature) {
+  if (!feature || !feature.geometry) {
+    return null;
+  }
+
+  const geometry = feature.geometry;
+
+  if (geometry.type === 'Point') {
+    const coordinates = geometry.coordinates;
+
+    if (
+      !Array.isArray(coordinates) ||
+      coordinates.length < 2
+    ) {
+      return null;
+    }
+
+    const lng = Number(coordinates[0]);
+    const lat = Number(coordinates[1]);
+
+    return isValidBulgariaCoordinate(lat, lng)
+      ? { lat, lng }
+      : null;
+  }
+
+  if (
+    geometry.type === 'Polygon' ||
+    geometry.type === 'MultiPolygon'
+  ) {
+    const layer = L.geoJSON(feature);
+    const bounds = layer.getBounds();
+
+    if (!bounds.isValid()) {
+      return null;
+    }
+
+    const center = bounds.getCenter();
+
+    return isValidBulgariaCoordinate(
+      center.lat,
+      center.lng
+    )
+      ? {
+          lat: center.lat,
+          lng: center.lng
+        }
+      : null;
+  }
+
+  if (
+    geometry.type === 'LineString' ||
+    geometry.type === 'MultiLineString'
+  ) {
+    const layer = L.geoJSON(feature);
+    const bounds = layer.getBounds();
+
+    if (!bounds.isValid()) {
+      return null;
+    }
+
+    const center = bounds.getCenter();
+
+    return isValidBulgariaCoordinate(
+      center.lat,
+      center.lng
+    )
+      ? {
+          lat: center.lat,
+          lng: center.lng
+        }
+      : null;
+  }
+
+  return null;
+}
+
+function isValidBulgariaCoordinate(lat, lng) {
+  return (
+    Number.isFinite(lat) &&
+    Number.isFinite(lng) &&
+    lat >= 41.20 &&
+    lat <= 44.25 &&
+    lng >= 22.30 &&
+    lng <= 28.65
+  );
+}
+
+function formatFireStationAddress(properties) {
+  const addressParts = [
+    properties['addr:street'],
+    properties['addr:housenumber'],
+    properties['addr:postcode'],
+    properties['addr:city']
+  ].filter(Boolean);
+
+  return addressParts.join(', ');
+}
+
+function escapeHtmlSafe(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+async function loadEvacuationFireStations() {
+  if (evacuationLayers.fireStations) {
+    return evacuationLayers.fireStations;
+  }
+
+  evacuationSetStatus(
+    'statusFireStations',
+    'fa-spinner fa-spin',
+    '#f39c12'
+  );
+
+  try {
+    const response = await fetch(FIRE_STATIONS_GEOJSON_URL, {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `GeoJSON request failed: HTTP ${response.status}`
+      );
+    }
+
+    const geojson = await response.json();
+
+    if (
+      !geojson ||
+      geojson.type !== 'FeatureCollection' ||
+      !Array.isArray(geojson.features)
+    ) {
+      throw new Error('Invalid fire stations GeoJSON format.');
+    }
+
+    const stations = [];
+
+    geojson.features.forEach(feature => {
+      const coordinates = getFireStationCoordinates(feature);
+
+      if (!coordinates) {
+        return;
+      }
+
+      const properties = feature.properties || {};
+
+      stations.push({
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+        name:
+          properties.name ||
+          properties['official_name'] ||
+          properties['short_name'] ||
+          'Fire station',
+        address: formatFireStationAddress(properties),
+        phone:
+          properties.phone ||
+          properties['contact:phone'] ||
+          '',
+        email:
+          properties.email ||
+          properties['contact:email'] ||
+          '',
+        website: properties.website || '',
+        osmId:
+          properties['@id'] ||
+          feature.id ||
+          ''
+      });
+    });
+
+    if (!stations.length) {
+      throw new Error(
+        'No valid fire stations were found in the GeoJSON file.'
+      );
+    }
+
+    evacuationStationsData = stations;
+
+    evacuationLayers.fireStations = L.layerGroup(
+      stations.map(station => {
+        const extraInfo = [
+          station.address,
+          station.phone
+            ? `Phone: ${station.phone}`
+            : '',
+          station.email
+            ? `Email: ${station.email}`
+            : ''
+        ]
+          .filter(Boolean)
+          .join('<br>');
+
+        return L.marker(
+          [station.lat, station.lng],
+          {
+            icon: evacuationCreateStationIcon(false),
+            title: station.name
+          }
+        ).bindPopup(`
+          <strong>${escapeHtmlSafe(station.name)}</strong>
+          <br>Fire station
+          <br>Coordinates:
+          ${station.lat.toFixed(5)},
+          ${station.lng.toFixed(5)}
+          ${extraInfo ? `<br>${escapeHtmlSafe(extraInfo)}` : ''}
+        `);
+      })
+    );
+
+    evacuationSetStatus(
+      'statusFireStations',
+      'fa-check',
+      '#2e9e3f'
+    );
+
+    console.info(
+      `Loaded ${stations.length} fire stations from GeoJSON.`
+    );
+
+    return evacuationLayers.fireStations;
+  } catch (error) {
+    console.error(
+      'Failed to load fire stations from GeoJSON:',
+      error
+    );
+
+    evacuationSetStatus(
+      'statusFireStations',
+      'fa-triangle-exclamation',
+      '#c0392b'
+    );
+
+    setEvacuationInfo(
+      'Fire stations could not be loaded from fire-stations.geojson.',
+      'error'
+    );
+
+    return null;
+  }
+}
+
+function parseEvacuationCoordinates(value) {
+  if (!value || !value.trim()) {
+    return null;
+  }
+
+  const normalized = value
+    .trim()
+    .replace(/[;]/g, ',')
+    .replace(/\s+/g, ' ');
+
+  const match = normalized.match(
+    /^(-?\d+(?:[.,]\d+)?)\s*[, ]\s*(-?\d+(?:[.,]\d+)?)$/
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const lat = Number(match[1].replace(',', '.'));
+  const lng = Number(match[2].replace(',', '.'));
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return null;
+  }
+
+  if (lat < 41.20 || lat > 44.25 || lng < 22.30 || lng > 28.65) {
+    return null;
+  }
+
+  return L.latLng(lat, lng);
+}
+
+function setEvacuationInfo(message, type = '') {
+  const info = document.getElementById('evacuationRouteInfo');
+
+  if (!info) {
+    return;
+  }
+
+  info.textContent = message;
+  info.classList.remove('error', 'success');
+
+  if (type) {
+    info.classList.add(type);
+  }
+}
+
+function removeEvacuationRoute() {
+  if (evacuationRouteLayer && map.hasLayer(evacuationRouteLayer)) {
+    map.removeLayer(evacuationRouteLayer);
+  }
+
+  evacuationRouteLayer = null;
+
+  if (
+    evacuationStationHighlight &&
+    evacuationLayers.fireStations &&
+    evacuationLayers.fireStations.hasLayer(evacuationStationHighlight)
+  ) {
+    evacuationStationHighlight.setIcon(
+      evacuationCreateStationIcon(false)
+    );
+  }
+
+  evacuationStationHighlight = null;
+
+  const clearButton = document.getElementById('clearEvacRouteBtn');
+
+  if (clearButton) {
+    clearButton.style.display = 'none';
+  }
+}
+
+function setEvacuationPoint(latlng, showMessage = true) {
+  evacuationSelectedPoint = L.latLng(latlng.lat, latlng.lng);
+
+  const input = document.getElementById('evacuationPoint');
+
+  if (input) {
+    input.value =
+      `${evacuationSelectedPoint.lat.toFixed(5)}, ` +
+      `${evacuationSelectedPoint.lng.toFixed(5)}`;
+  }
+
+  if (evacuationPointMarker && map.hasLayer(evacuationPointMarker)) {
+    map.removeLayer(evacuationPointMarker);
+  }
+
+  evacuationPointMarker = L.marker(
+    evacuationSelectedPoint,
+    {
+      icon: evacuationCreatePointIcon(),
+      zIndexOffset: 1000
+    }
+  )
+    .bindPopup('Fire point')
+    .addTo(map);
+
+  removeEvacuationRoute();
+
+  if (showMessage) {
+    setEvacuationInfo(
+      'Point selected. Click “Calculate evacuation route”.'
+    );
+  }
+}
+
+function findNearestEvacuationFireStation(latlng) {
+  if (!evacuationStationsData.length) {
+    return null;
+  }
+
+  let nearest = null;
+  let shortestDistance = Infinity;
+
+  evacuationStationsData.forEach(station => {
+    const stationPoint = L.latLng(
+      station.lat,
+      station.lng
+    );
+
+    const distance = map.distance(
+      latlng,
+      stationPoint
+    );
+
+    if (distance < shortestDistance) {
+      shortestDistance = distance;
+
+      nearest = {
+        ...station,
+        distance,
+        latlng: stationPoint
+      };
+    }
+  });
+
+  if (nearest && evacuationLayers.fireStations) {
+    const layers =
+      evacuationLayers.fireStations.getLayers();
+
+    nearest.layer = layers.find(layer => {
+      const point = layer.getLatLng();
+
+      return (
+        Math.abs(point.lat - nearest.lat) < 0.000001 &&
+        Math.abs(point.lng - nearest.lng) < 0.000001
+      );
+    }) || null;
+  }
+
+  return nearest;
+}
+
+async function calculateEvacuationRoute(
+  fromLat,
+  fromLng,
+  toLat,
+  toLng
+) {
+  const url =
+    'https://router.project-osrm.org/route/v1/driving/' +
+    `${fromLng},${fromLat};${toLng},${toLat}` +
+    '?overview=full&geometries=geojson&steps=true';
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Routing service returned HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (
+    data.code !== 'Ok' ||
+    !data.routes ||
+    !data.routes.length
+  ) {
+    throw new Error('No drivable route was found.');
+  }
+
+  return data.routes[0];
+}
+
+function findNEarestEvacuationFireStations(latlng, n = 5) {
+  if (!evacuationStationsData.length) {
+    return [];
+  }
+
+  const withDistance = evacuationStationsData.map(station => {
+    const stationPoint = L.latLng(station.lat, station.lng);
+    const distance = map.distance(latlng, stationPoint);
+
+    return {
+      ...station,
+      distance,
+      latlng: stationPoint
+    };
+  });
+
+  withDistance.sort((a, b) => a.distance - b.distance);
+
+  return withDistance.slice(0, n);
+}
+
+function formatRouteDistance(meters) {
+  if (!Number.isFinite(meters)) {
+    return '—';
+  }
+
+  if (meters < 1000) {
+    return `${Math.round(meters)} m`;
+  }
+
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
+function formatRouteDuration(seconds) {
+  if (!Number.isFinite(seconds)) {
+    return '—';
+  }
+
+  const minutes = Math.max(1, Math.round(seconds / 60));
+
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  return remainingMinutes
+    ? `${hours} h ${remainingMinutes} min`
+    : `${hours} h`;
+}
+
+function getRouteInstructionIcon(step) {
+  const type = step.maneuver?.type || '';
+  const modifier = step.maneuver?.modifier || '';
+
+  if (type === 'depart') {
+    return 'fa-location-arrow';
+  }
+
+  if (type === 'arrive') {
+    return 'fa-flag-checkered';
+  }
+
+  if (type === 'roundabout' || type === 'rotary') {
+    return 'fa-rotate';
+  }
+
+  if (modifier.includes('left')) {
+    return 'fa-arrow-left';
+  }
+
+  if (modifier.includes('right')) {
+    return 'fa-arrow-right';
+  }
+
+  if (modifier === 'uturn') {
+    return 'fa-turn-up';
+  }
+
+  return 'fa-arrow-up';
+}
+
+function getRouteInstructionText(step) {
+  const type = step.maneuver?.type || '';
+  const modifier = step.maneuver?.modifier || '';
+  const roadName = step.name || '';
+
+  if (type === 'depart') {
+    return roadName
+      ? `Head ${modifier || 'forward'} on ${roadName}`
+      : 'Start the route';
+  }
+
+  if (type === 'arrive') {
+    return 'Arrive at destination';
+  }
+
+  if (type === 'roundabout' || type === 'rotary') {
+    const exitNumber = step.maneuver?.exit;
+
+    return exitNumber
+      ? `Take exit ${exitNumber} at the roundabout`
+      : 'Enter the roundabout';
+  }
+
+  let action = 'Continue';
+
+  if (modifier.includes('left')) {
+    action = 'Turn left';
+  } else if (modifier.includes('right')) {
+    action = 'Turn right';
+  } else if (modifier === 'uturn') {
+    action = 'Make a U-turn';
+  } else if (type === 'new name') {
+    action = 'Continue';
+  }
+
+  return roadName
+    ? `${action} onto ${roadName}`
+    : action;
+}
+
+function escapeRouteInstructionText(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function showRouteInstructions(route, destinationName) {
+  const panel = document.getElementById(
+    'routeInstructionsPanel'
+  );
+
+  panel.classList.remove('instructions-collapsed');
+
+const toggleButton = document.getElementById(
+  'toggleRouteInstructionsBtn'
+);
+
+if (toggleButton) {
+  toggleButton.setAttribute('aria-expanded', 'true');
+  toggleButton.setAttribute(
+    'aria-label',
+    'Hide route instructions'
+  );
+  toggleButton.setAttribute(
+    'title',
+    'Hide route instructions'
+  );
+}
+
+  const destination = document.getElementById(
+    'routeInstructionsDestination'
+  );
+
+  const distance = document.getElementById(
+    'routeInstructionsDistance'
+  );
+
+  const duration = document.getElementById(
+    'routeInstructionsDuration'
+  );
+
+  const list = document.getElementById(
+    'routeInstructionsList'
+  );
+
+  if (!panel || !destination || !distance || !duration || !list) {
+    return;
+  }
+
+  destination.textContent = destinationName || 'Route instructions';
+  distance.textContent = formatRouteDistance(route.distance);
+  duration.textContent = formatRouteDuration(route.duration);
+
+  const steps = route.legs
+    ?.flatMap(leg => leg.steps || [])
+    .filter(step => step.maneuver);
+
+  if (!steps || !steps.length) {
+    list.innerHTML = `
+      <div class="route-instructions-empty">
+        No turn-by-turn instructions available.
+      </div>
+    `;
+
+    panel.classList.add('visible');
+    return;
+  }
+
+  list.innerHTML = steps.map((step, index) => {
+  const icon = getRouteInstructionIcon(step);
+  const text = escapeRouteInstructionText(
+    getRouteInstructionText(step)
+  );
+  const stepDistance = formatRouteDistance(step.distance);
+
+  const location = step.maneuver?.location || [];
+  const lng = Number(location[0]);
+  const lat = Number(location[1]);
+
+  const hasLocation =
+    Number.isFinite(lat) &&
+    Number.isFinite(lng);
+
+  return `
+    <div
+      class="route-instruction"
+      data-step-index="${index}"
+      data-lat="${hasLocation ? lat : ''}"
+      data-lng="${hasLocation ? lng : ''}"
+    >
+      <div class="route-instruction-icon">
+        <i class="fa-solid ${icon}"></i>
+      </div>
+
+      <div class="route-instruction-text">
+        ${text}
+      </div>
+
+      <div class="route-instruction-distance">
+        ${stepDistance}
+      </div>
+    </div>
+  `;
+}).join('');
+
+  panel.classList.add('visible');
+
+  list.querySelectorAll('.route-instruction').forEach(item => {
+  item.addEventListener('mouseenter', function() {
+    const lat = Number(this.dataset.lat);
+    const lng = Number(this.dataset.lng);
+
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      showRouteStepLocation({
+        maneuver: {
+          location: [lng, lat]
+        }
+      });
+    }
+  });
+
+  item.addEventListener('mouseleave', hideRouteStepLocation);
+});
+}
+
+function hideRouteInstructions() {
+  const panel = document.getElementById(
+    'routeInstructionsPanel'
+  );
+
+  if (panel) {
+    panel.classList.remove('visible');
+  }
+
+  hideRouteStepLocation();
+}
+
+function toggleRouteInstructionsContent() {
+  const panel = document.getElementById(
+    'routeInstructionsPanel'
+  );
+
+  const button = document.getElementById(
+    'toggleRouteInstructionsBtn'
+  );
+
+  if (!panel || !button) {
+    return;
+  }
+
+  const isCollapsed = panel.classList.toggle(
+    'instructions-collapsed'
+  );
+
+  button.setAttribute(
+    'aria-expanded',
+    String(!isCollapsed)
+  );
+
+  button.setAttribute(
+    'aria-label',
+    isCollapsed
+      ? 'Show route instructions'
+      : 'Hide route instructions'
+  );
+
+  button.setAttribute(
+    'title',
+    isCollapsed
+      ? 'Show route instructions'
+      : 'Hide route instructions'
+  );
+
+  hideRouteStepLocation();
+}
+
+function showRouteStepLocation(step) {
+  const location = step?.maneuver?.location;
+
+  if (
+    !Array.isArray(location) ||
+    location.length < 2
+  ) {
+    return;
+  }
+
+  // OSRM връща координати като [longitude, latitude].
+  const lng = Number(location[0]);
+  const lat = Number(location[1]);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return;
+  }
+
+  if (routeStepHoverMarker && map.hasLayer(routeStepHoverMarker)) {
+    map.removeLayer(routeStepHoverMarker);
+  }
+
+  routeStepHoverMarker = L.circleMarker(
+    [lat, lng],
+    {
+      radius: 8,
+      color: '#ffffff',
+      weight: 3,
+      fillColor: '#f59e0b',
+      fillOpacity: 1,
+      interactive: false,
+      pane: 'markerPane'
+    }
+  ).addTo(map);
+}
+
+function hideRouteStepLocation() {
+  if (
+    routeStepHoverMarker &&
+    map.hasLayer(routeStepHoverMarker)
+  ) {
+    map.removeLayer(routeStepHoverMarker);
+  }
+
+  routeStepHoverMarker = null;
+}
+
+
+async function calculateFireResponseRoute() {
+  const input = document.getElementById('evacuationPoint');
+
+  if (!evacuationSelectedPoint && input) {
+    const parsed = parseEvacuationCoordinates(input.value);
+
+    if (!parsed) {
+      setEvacuationInfo(
+        'Enter valid coordinates inside Bulgaria or select a fire point on the map.',
+        'error'
+      );
+      return;
+    }
+
+    setEvacuationPoint(parsed, false);
+  }
+
+  if (!evacuationSelectedPoint) {
+    setEvacuationInfo(
+      'Enter coordinates or select a fire point on the map.',
+      'error'
+    );
+    return;
+  }
+
+  if (!evacuationStationsData.length) {
+    setEvacuationInfo(
+      'Enable the Fire stations layer first.',
+      'error'
+    );
+    return;
+  }
+
+  const button = document.getElementById(
+    'calculateFireResponseRouteBtn'
+  );
+
+  if (button) {
+    button.disabled = true;
+  }
+
+  setEvacuationInfo(
+    'Finding the fastest fire-response route...'
+  );
+
+  try {
+    // Избираме 5 близки станции по права линия,
+    // след което проверяваме път до пожара от всяка.
+    const candidates = findNEarestEvacuationFireStations(
+      evacuationSelectedPoint,
+      5
+    );
+
+    if (!candidates.length) {
+      throw new Error('No fire stations available.');
+    }
+
+    const routes = await Promise.all(
+      candidates.map(async station => {
+        try {
+          // ВАЖНО: начало е станцията, край е пожарът.
+          const route = await calculateEvacuationRoute(
+            station.lat,
+            station.lng,
+            evacuationSelectedPoint.lat,
+            evacuationSelectedPoint.lng
+          );
+
+          return {
+            station,
+            route
+          };
+        } catch (error) {
+          console.warn(
+            'Route from fire station failed:',
+            station.name,
+            error
+          );
+
+          return null;
+        }
+      })
+    );
+
+    const validRoutes = routes.filter(item => item?.route);
+
+    if (!validRoutes.length) {
+      throw new Error(
+        'No drivable route could be found from any fire station.'
+      );
+    }
+
+    // Тук ползваме време, защото за реакция на екип
+    // то е по-важно от чистото разстояние.
+    validRoutes.sort(
+      (a, b) => a.route.duration - b.route.duration
+    );
+
+    const best = validRoutes[0];
+
+    removeEvacuationRoute();
+
+    evacuationRouteLayer = L.geoJSON(
+      best.route.geometry,
+      {
+        style: {
+          color: '#f97316',
+          weight: 5,
+          opacity: 0.92
+        }
+      }
+    ).addTo(map);
+
+    map.fitBounds(
+      evacuationRouteLayer.getBounds(),
+      {
+        padding: [35, 35]
+      }
+    );
+
+    if (
+      best.station.layer &&
+      evacuationLayers.fireStations &&
+      evacuationLayers.fireStations.hasLayer(best.station.layer)
+    ) {
+      best.station.layer.setIcon(
+        evacuationCreateStationIcon(true)
+      );
+
+      evacuationStationHighlight = best.station.layer;
+    }
+
+    const distanceKm = (best.route.distance / 1000).toFixed(2);
+    const durationMin = Math.max(
+      1,
+      Math.round(best.route.duration / 60)
+    );
+
+    const clearButton = document.getElementById(
+      'clearEvacRouteBtn'
+    );
+
+    if (clearButton) {
+      clearButton.style.display = 'block';
+    }
+
+    // Показва route steps в правилната посока:
+    // пожарна станция -> пожар.
+    showRouteInstructions(
+      best.route,
+      `Fire response: ${best.station.name}`
+    );
+
+    setEvacuationInfo(
+      `Response route from ${best.station.name} to selected fire point. ` +
+      `Distance: ${distanceKm} km. ` +
+      `Estimated response time: ${durationMin} min.`,
+      'success'
+    );
+  } catch (error) {
+    console.error('Fire response route error:', error);
+
+    setEvacuationInfo(
+      'The response route to the selected fire point could not be calculated.',
+      'error'
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+    }
+  }
+}
+
+
+async function calculateNearestEvacuationRoute() {
+  const input = document.getElementById('evacuationPoint');
+
+  if (!evacuationSelectedPoint && input) {
+    const parsed = parseEvacuationCoordinates(input.value);
+
+    if (!parsed) {
+      setEvacuationInfo(
+        'Enter valid coordinates inside Bulgaria or select a point on the map.',
+        'error'
+      );
+      return;
+    }
+
+    setEvacuationPoint(parsed, false);
+  }
+
+  if (!evacuationSelectedPoint) {
+    setEvacuationInfo(
+      'Enter coordinates or select a point on the map.',
+      'error'
+    );
+    return;
+  }
+
+  if (!evacuationStationsData.length) {
+    setEvacuationInfo(
+      'Enable the Fire stations layer first.',
+      'error'
+    );
+    return;
+  }
+
+  const button = document.getElementById('calculateEvacRouteBtn');
+
+  if (button) {
+    button.disabled = true;
+  }
+
+  setEvacuationInfo('Finding the shortest route...');
+
+  try {
+    const candidates = findNEarestEvacuationFireStations(
+      evacuationSelectedPoint,
+      5
+    );
+
+    if (!candidates.length) {
+      throw new Error('No fire stations available.');
+    }
+
+    const routes = await Promise.all(
+      candidates.map(async station => {
+        try {
+          const route = await calculateEvacuationRoute(
+            evacuationSelectedPoint.lat,
+            evacuationSelectedPoint.lng,
+            station.lat,
+            station.lng
+          );
+
+          return {
+            station,
+            route
+          };
+        } catch (e) {
+          console.warn(
+            'Route to station failed:',
+            station.name,
+            e
+          );
+          return null;
+        }
+      })
+    );
+
+    const validRoutes = routes.filter(r => r && r.route);
+
+    if (!validRoutes.length) {
+      throw new Error(
+        'No drivable route could be found to any fire station.'
+      );
+    }
+
+    validRoutes.sort(
+      (a, b) => a.route.distance - b.route.distance
+    );
+
+    const best = validRoutes[0];
+
+    removeEvacuationRoute();
+
+    evacuationRouteLayer = L.geoJSON(
+      best.route.geometry,
+      {
+        style: {
+          color: '#2e7bf2',
+          weight: 5,
+          opacity: 0.9
+        }
+      }
+    ).addTo(map);
+
+    map.fitBounds(
+      evacuationRouteLayer.getBounds(),
+      {
+        padding: [35, 35]
+      }
+    );
+
+    if (
+      best.station.layer &&
+      evacuationLayers.fireStations &&
+      evacuationLayers.fireStations.hasLayer(
+        best.station.layer
+      )
+    ) {
+      best.station.layer.setIcon(
+        evacuationCreateStationIcon(true)
+      );
+      evacuationStationHighlight = best.station.layer;
+    }
+
+    const distanceKm = (best.route.distance / 1000).toFixed(2);
+    const durationMin = Math.max(
+      1,
+      Math.round(best.route.duration / 60)
+    );
+
+    showRouteInstructions(
+      best.route,
+      best.station.name
+    );
+
+    const clearButton = document.getElementById(
+      'clearEvacRouteBtn'
+    );
+
+    if (clearButton) {
+      clearButton.style.display = 'block';
+    }
+
+    setEvacuationInfo(
+      `Nearest fire station: ${best.station.name}. ` +
+      `Distance: ${distanceKm} km. ` +
+      `Estimated time: ${durationMin} min.`,
+      'success'
+    );
+  } catch (error) {
+    console.error('Evacuation route error:', error);
+
+    setEvacuationInfo(
+      'The route could not be calculated. Check your connection and coordinates.',
+      'error'
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+    }
+  }
+}
+
+function clearEvacuationSelection() {
+  hideRouteInstructions();
+
+  const input = document.getElementById('evacuationPoint');
+
+  if (input) {
+    input.value = '';
+  }
+
+  if (evacuationPointMarker && map.hasLayer(evacuationPointMarker)) {
+    map.removeLayer(evacuationPointMarker);
+  }
+
+  evacuationPointMarker = null;
+  evacuationSelectedPoint = null;
+
+  removeEvacuationRoute();
+  setEvacuationInfo('');
+}
+
+function evacuationCreateHospitalIcon(isHighlighted = false) {
+  const color = isHighlighted ? '#2e9e3f' : '#e53935';
+
+  return L.divIcon({
+    className: 'evacuation-hospital-marker',
+    html: `
+      <i class="fa-solid fa-hospital"
+         style="color:${color}; font-size:${isHighlighted ? 20 : 16}px;">
+      </i>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+}
+
+async function loadEvacuationHospitals() {
+  if (evacuationLayers.hospitals) {
+    return evacuationLayers.hospitals;
+  }
+
+  evacuationSetStatus(
+    'statusHospitals',
+    'fa-spinner fa-spin',
+    '#f39c12'
+  );
+
+  try {
+    const response = await fetch(HOSPITALS_GEOJSON_URL, {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Hospitals GeoJSON request failed: HTTP ${response.status}`
+      );
+    }
+
+    const geojson = await response.json();
+
+    if (
+      !geojson ||
+      geojson.type !== 'FeatureCollection' ||
+      !Array.isArray(geojson.features)
+    ) {
+      throw new Error('Invalid hospitals GeoJSON format.');
+    }
+
+    const hospitals = [];
+
+    geojson.features.forEach(feature => {
+      const coordinates = getFireStationCoordinates(feature);
+
+      if (!coordinates) {
+        return;
+      }
+
+      const properties = feature.properties || {};
+
+      hospitals.push({
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+        name:
+          properties.name ||
+          properties['official_name'] ||
+          'Hospital',
+        address: formatFireStationAddress(properties),
+        phone:
+          properties.phone ||
+          properties['contact:phone'] ||
+          '',
+        email:
+          properties.email ||
+          properties['contact:email'] ||
+          '',
+        website: properties.website || '',
+        osmId:
+          properties['@id'] ||
+          feature.id ||
+          ''
+      });
+    });
+
+    if (!hospitals.length) {
+      throw new Error(
+        'No valid hospitals were found in the GeoJSON file.'
+      );
+    }
+
+    evacuationHospitalsData = hospitals;
+
+    evacuationLayers.hospitals = L.layerGroup(
+      hospitals.map(hospital => {
+        const extraInfo = [
+          hospital.address,
+          hospital.phone
+            ? `Phone: ${hospital.phone}`
+            : '',
+          hospital.email
+            ? `Email: ${hospital.email}`
+            : ''
+        ]
+          .filter(Boolean)
+          .join('<br>');
+
+        return L.marker(
+          [hospital.lat, hospital.lng],
+          {
+            icon: evacuationCreateHospitalIcon(false),
+            title: hospital.name
+          }
+        ).bindPopup(`
+          <strong>${escapeHtmlSafe(hospital.name)}</strong>
+          <br>Hospital
+          <br>Coordinates:
+          ${hospital.lat.toFixed(5)},
+          ${hospital.lng.toFixed(5)}
+          ${extraInfo ? `<br>${escapeHtmlSafe(extraInfo)}` : ''}
+        `);
+      })
+    );
+
+    evacuationSetStatus(
+      'statusHospitals',
+      'fa-check',
+      '#2e9e3f'
+    );
+
+    console.info(
+      `Loaded ${hospitals.length} hospitals from GeoJSON.`
+    );
+
+    return evacuationLayers.hospitals;
+  } catch (error) {
+    console.error(
+      'Failed to load hospitals from GeoJSON:',
+      error
+    );
+
+    evacuationSetStatus(
+      'statusHospitals',
+      'fa-triangle-exclamation',
+      '#c0392b'
+    );
+
+    setEvacuationInfo(
+      'Hospitals could not be loaded from hospitals.geojson.',
+      'error'
+    );
+
+    return null;
+  }
+}
+
+function findNEarestEvacuationHospitals(latlng, n = 5) {
+  if (!evacuationHospitalsData.length) {
+    return [];
+  }
+
+  const withDistance = evacuationHospitalsData.map(hospital => {
+    const hospitalPoint = L.latLng(hospital.lat, hospital.lng);
+    const distance = map.distance(latlng, hospitalPoint);
+
+    return {
+      ...hospital,
+      distance,
+      latlng: hospitalPoint
+    };
+  });
+
+  withDistance.sort((a, b) => a.distance - b.distance);
+
+  return withDistance.slice(0, n);
+}
+
+async function calculateEvacuationRouteToHospital() {
+  if (!evacuationSelectedPoint) {
+    setEvacuationInfo(
+      'Select a point on the map or enter coordinates first.',
+      'error'
+    );
+    return;
+  }
+
+  if (!evacuationHospitalsData.length) {
+    setEvacuationInfo(
+      'Enable the Hospitals layer first.',
+      'error'
+    );
+    return;
+  }
+
+  const button = document.getElementById(
+    'calculateEvacRouteHospitalBtn'
+  );
+
+  if (button) {
+    button.disabled = true;
+  }
+
+  setEvacuationInfo('Finding the shortest route to hospital...');
+
+  try {
+    const candidates = findNEarestEvacuationHospitals(
+      evacuationSelectedPoint,
+      5
+    );
+
+    if (!candidates.length) {
+      throw new Error('No hospitals available.');
+    }
+
+    const routes = await Promise.all(
+      candidates.map(async hospital => {
+        try {
+          const route = await calculateEvacuationRoute(
+            evacuationSelectedPoint.lat,
+            evacuationSelectedPoint.lng,
+            hospital.lat,
+            hospital.lng
+          );
+
+          return {
+            hospital,
+            route
+          };
+        } catch (e) {
+          console.warn(
+            'Route to hospital failed:',
+            hospital.name,
+            e
+          );
+          return null;
+        }
+      })
+    );
+
+    const validRoutes = routes.filter(r => r && r.route);
+
+    if (!validRoutes.length) {
+      throw new Error(
+        'No drivable route could be found to any hospital.'
+      );
+    }
+
+    validRoutes.sort(
+      (a, b) => a.route.distance - b.route.distance
+    );
+
+    const best = validRoutes[0];
+
+    removeEvacuationRoute();
+
+    evacuationRouteLayer = L.geoJSON(
+      best.route.geometry,
+      {
+        style: {
+          color: '#e53935',
+          weight: 5,
+          opacity: 0.9
+        }
+      }
+    ).addTo(map);
+
+    map.fitBounds(
+      evacuationRouteLayer.getBounds(),
+      {
+        padding: [35, 35]
+      }
+    );
+
+    if (
+      best.hospital.layer &&
+      evacuationLayers.hospitals &&
+      evacuationLayers.hospitals.hasLayer(
+        best.hospital.layer
+      )
+    ) {
+      best.hospital.layer.setIcon(
+        evacuationCreateHospitalIcon(true)
+      );
+      evacuationStationHighlight = best.hospital.layer;
+    }
+
+    const distanceKm = (best.route.distance / 1000).toFixed(2);
+    const durationMin = Math.max(
+      1,
+      Math.round(best.route.duration / 60)
+    );
+
+    showRouteInstructions(
+      best.route,
+      best.hospital.name
+    );
+
+    const clearButton = document.getElementById(
+      'clearEvacRouteBtn'
+    );
+
+    if (clearButton) {
+      clearButton.style.display = 'block';
+    }
+
+    setEvacuationInfo(
+      `Nearest hospital: ${best.hospital.name}. ` +
+      `Distance: ${distanceKm} km. ` +
+      `Estimated time: ${durationMin} min.`,
+      'success'
+    );
+  } catch (error) {
+    console.error('Evacuation route to hospital error:', error);
+
+    setEvacuationInfo(
+      'The route to hospital could not be calculated.',
+      'error'
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+    }
+  }
+}
+
+function setupEvacuationPanel() {
+  const roadsCheckbox = document.getElementById('layerRoads');
+  const stationsCheckbox = document.getElementById('layerFireStations');
+  const routeControls = document.getElementById(
+    'evacuationRouteControls'
+  );
+  const pointInput = document.getElementById('evacuationPoint');
+  const calculateButton = document.getElementById(
+    'calculateEvacRouteBtn'
+  );
+  const clearButton = document.getElementById(
+    'clearEvacRouteBtn'
+  );
+
+  if (!roadsCheckbox || !stationsCheckbox) {
+    console.warn(
+      'Evacuation panel controls were not found.'
+    );
+    return;
+  }
+
+  roadsCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      loadEvacuationRoadsLayer().addTo(map);
+
+      if (routeControls) {
+        routeControls.classList.add('visible');
+      }
+    } else {
+      if (
+        evacuationLayers.roads &&
+        map.hasLayer(evacuationLayers.roads)
+      ) {
+        map.removeLayer(evacuationLayers.roads);
+      }
+
+      if (routeControls) {
+        routeControls.classList.remove('visible');
+      }
+
+      clearEvacuationSelection();
+    }
+  });
+
+  stationsCheckbox.addEventListener(
+  'change',
+  async function() {
+    if (this.checked) {
+      const layer = await loadEvacuationFireStations();
+
+      if (layer) {
+        layer.addTo(map);
+      }
+    } else {
+      if (
+        evacuationLayers.fireStations &&
+        map.hasLayer(evacuationLayers.fireStations)
+      ) {
+        map.removeLayer(evacuationLayers.fireStations);
+      }
+
+      evacuationSetStatus(
+        'statusFireStations',
+        '',
+        ''
+      );
+
+      removeEvacuationRoute();
+    }
+  }
+);
+
+  if (calculateButton) {
+    calculateButton.addEventListener(
+      'click',
+      calculateNearestEvacuationRoute
+    );
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener(
+      'click',
+      clearEvacuationSelection
+    );
+  }
+
+  if (pointInput) {
+    pointInput.addEventListener('change', function() {
+      const parsed = parseEvacuationCoordinates(this.value);
+
+      if (!parsed) {
+        evacuationSelectedPoint = null;
+        setEvacuationInfo(
+          'Invalid coordinates. Use latitude, longitude.',
+          'error'
+        );
+        return;
+      }
+
+      setEvacuationPoint(parsed);
+    });
+
+    pointInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        calculateNearestEvacuationRoute();
+      }
+    });
+  }
+
+  map.on('click', function(event) {
+    if (!roadsCheckbox.checked) {
+      return;
+    }
+
+    setEvacuationPoint(event.latlng);
+  });
+
+
+  const hospitalsCheckbox = document.getElementById('layerHospitals');
+
+hospitalsCheckbox?.addEventListener(
+  'change',
+  async function() {
+    if (this.checked) {
+      const layer = await loadEvacuationHospitals();
+
+      if (layer) {
+        layer.addTo(map);
+      }
+    } else {
+      if (
+        evacuationLayers.hospitals &&
+        map.hasLayer(evacuationLayers.hospitals)
+      ) {
+        map.removeLayer(evacuationLayers.hospitals);
+      }
+
+      evacuationSetStatus(
+        'statusHospitals',
+        '',
+        ''
+      );
+
+      removeEvacuationRoute();
+    }
+  }
+);
+
+const hospitalRouteButton = document.getElementById(
+  'calculateEvacRouteHospitalBtn'
+);
+
+hospitalRouteButton?.addEventListener(
+  'click',
+  calculateEvacuationRouteToHospital
+);
+
+
+const toggleRouteInstructionsButton =
+  document.getElementById(
+    'toggleRouteInstructionsBtn'
+  );
+
+toggleRouteInstructionsButton?.addEventListener(
+  'click',
+  toggleRouteInstructionsContent
+);
+
+const fireResponseRouteButton = document.getElementById(
+  'calculateFireResponseRouteBtn'
+);
+
+fireResponseRouteButton?.addEventListener(
+  'click',
+  calculateFireResponseRoute
+);
+}
+
+if (
+  typeof map !== 'undefined' &&
+  typeof L !== 'undefined'
+) {
+  setupEvacuationPanel();
+}
+
 </script>
 
 </body>
