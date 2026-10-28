@@ -2300,6 +2300,273 @@ body.theme-orange .damage-panel-body input[type="date"]{ color-scheme: light; }
 }
 .stats-top-row:last-child{ border-bottom:none; }
 .stats-top-row strong{ color:var(--text-dark); font-size:11px; white-space:nowrap; }
+
+
+/* Mobile layout — vertical panel menu */
+@media (max-width: 720px) {
+  #app {
+    height: 100dvh;
+  }
+
+  #sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    transform: none;
+    pointer-events: none;
+    z-index: 1100;
+  }
+
+  #sidebarToggle {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: auto;
+    display: flex;
+    width: 44px;
+    height: 44px;
+    z-index: 1200;
+  }
+
+  /* Vertical menu with readable panel names */
+  #sidebar .sidebar-rail {
+    position: absolute;
+    top: 60px;
+    left: 8px;
+    width: min(320px, calc(100vw - 68px));
+    max-height: calc(100dvh - 76px);
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+  }
+
+  #sidebar.open .sidebar-rail {
+    display: flex;
+  }
+
+  #sidebar .rail-btn {
+    width: 100%;
+    min-height: 46px;
+    height: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    text-align: left;
+    transform: none;
+  }
+
+  #sidebar .rail-btn > i {
+    width: 22px;
+    flex: 0 0 22px;
+    text-align: center;
+  }
+
+  /* Reuse the existing tooltip text as a visible label */
+  #sidebar .rail-btn .rail-tooltip {
+    position: static;
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    opacity: 1;
+    transform: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    line-height: 1.35;
+    pointer-events: none;
+  }
+
+  #sidebar .rail-badge {
+    top: 2px;
+    right: 2px;
+  }
+
+  /* The selected panel occupies the same space as the menu */
+  #sidebar .panel-flyout {
+    position: absolute;
+    top: 60px;
+    left: 8px;
+    right: auto;
+    bottom: auto;
+    width: min(360px, calc(100vw - 68px));
+    max-height: calc(100dvh - 76px);
+    min-width: 0;
+    box-sizing: border-box;
+    animation: none;
+    pointer-events: auto;
+  }
+
+  #sidebar:not(.open) .panel-flyout {
+    display: none !important;
+  }
+
+  #sidebar.open .panel-flyout.open {
+    display: flex;
+  }
+
+  #sidebar.open:has(.panel-flyout.open) .sidebar-rail {
+    display: none;
+  }
+
+  #sidebar .panel-flyout > .panel-header {
+    min-height: 48px;
+    padding: 8px 10px;
+  }
+
+  #sidebar .panel-header-title {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #sidebar .panel-close {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+
+  #sidebar .panel-flyout > .panel-body {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    padding: 10px 12px 16px;
+  }
+
+  #sidebar .panel-body input,
+  #sidebar .panel-body select,
+  #sidebar .panel-body textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  #sidebar .option-row {
+    min-height: 38px;
+    flex-wrap: wrap;
+  }
+
+  #sidebar .option-row .label-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  #sidebar input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  #sidebar .full-btn,
+  #sidebar .locator-btn {
+    min-height: 40px;
+    white-space: normal;
+  }
+
+  /* Right toolbar */
+  .map-toolbar {
+    top: 8px;
+    right: 8px;
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 1200;
+  }
+
+  .map-toolbar button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
+  }
+
+  .toolbar-tooltip {
+    display: none !important;
+  }
+
+  /* Floating windows: keep space for the right toolbar */
+  .legend-panel,
+  .locator-panel,
+  .fire-chart-panel,
+  .route-instructions-panel {
+    top: 60px;
+    left: 8px;
+    right: 60px;
+    bottom: auto;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 76px);
+    box-sizing: border-box;
+    z-index: 1150;
+  }
+
+  .legend-body,
+  .locator-body,
+  .fire-chart-body {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .route-instructions-list {
+    max-height: calc(100dvh - 180px);
+    overflow-y: auto;
+  }
+
+  /* Search */
+  .search-box.open {
+    top: 60px;
+    left: 8px;
+    right: 60px;
+    width: auto;
+    box-sizing: border-box;
+    z-index: 1170;
+  }
+
+  .search-box input {
+    font-size: 16px;
+  }
+
+  .search-results {
+    top: 108px;
+    left: 8px;
+    right: 60px;
+    width: auto;
+    max-height: calc(100dvh - 124px);
+    box-sizing: border-box;
+    z-index: 1170;
+  }
+
+  .point-report-modal {
+    width: calc(100vw - 24px);
+    max-width: 440px;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .leaflet-control-attribution {
+    max-width: calc(100vw - 20px);
+    white-space: normal;
+    font-size: 8px;
+  }
+}
 </style>
 </head>
 <body>
@@ -2647,11 +2914,7 @@ body.theme-orange .damage-panel-body input[type="date"]{ color-scheme: light; }
         <span class="label-text">MODIS/Sentinel2 <em>(supervised)</em></span>
         <span class="layer-status" id="statusModisBurnt"></span>
       </label>
-      <label class="option-row">
-  <input type="checkbox" id="chkFireSeverity">
-  <span class="label-text">WEEKLY BURNT AREAS <em>(weekly updated)</em></span>
-  <span class="layer-status" id="statusFireSeverity"></span>
-</label>
+      
       <label class="option-row">
         <input type="checkbox" id="chkNrtBurnt">
         <span class="label-text">MODIS &amp; VIIRS NRT</span>
@@ -3303,18 +3566,23 @@ function deletePointReport(index) {
   // ---------- Два вида базова карта: сателит (по подразбиране) и светла ----------
   // Всеки тип е разделен на "земя" (zIndex:0, най-отдолу) и "граници/надписи" (zIndex:650,
   // винаги НАД всички data overlay слоеве - Map Options, Forecasts и т.н.), за ориентация.
-  const lightGround = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
+  const lightGround = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution:
+      'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, ' +
+      'Intermap, increment P Corp., GEBCO, USGS, FAO, NPS, ' +
+      'NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, ' +
+      'Esri Japan, METI, Esri China (Hong Kong), (c) OpenStreetMap contributors, ' +
+      'and the GIS User Community',
     maxZoom: 19,
     zIndex: 0
-  });
-  const lightLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-    subdomains: 'abcd',
-    maxZoom: 19,
-    zIndex: 650
-  });
-  const lightBase = L.layerGroup([lightGround, lightLabels]);
+  }
+);
+  
+  const lightBase = L.layerGroup([
+  lightGround
+  ]);
 
   const satelliteImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
@@ -3389,6 +3657,19 @@ function deletePointReport(index) {
   toolMenuBtn.addEventListener('click', () => {
     toolbarEl.classList.toggle('collapsed');
   });
+
+  const mobileLayoutQuery = window.matchMedia('(max-width: 720px)');
+
+function applyResponsiveToolbar(event) {
+  toolbarEl.classList.toggle('collapsed', event.matches);
+}
+
+applyResponsiveToolbar(mobileLayoutQuery);
+
+mobileLayoutQuery.addEventListener(
+  'change',
+  applyResponsiveToolbar
+);
 
   // ---------- Sidebar: лента с иконки отляво + панел, който се отваря вдясно от нея ----------
   // Само един панел е отворен наведнъж; повторен клик върху активната иконка го затваря.
@@ -3627,7 +3908,7 @@ locateBtn?.addEventListener('click', () => {
 
       if (err.code === err.PERMISSION_DENIED) {
         message =
-          'Достъпът до локацията е отказан. Разреши Location permission за localhost в браузъра.';
+          'Достъпът до локацията е отказан. Разреши Location permission.';
       } else if (err.code === err.POSITION_UNAVAILABLE) {
         message =
           'Текущата локация не е налична.';
@@ -3672,9 +3953,12 @@ locateBtn?.addEventListener('click', () => {
     bounds: bulgariaBounds.pad(0.2)
   };
 
-  function isRdaKey(key){
-    return key === 'modisActive' || key === 'viirsActive' || key === 'modisBurnt' || key === 'nrtBurnt' || key === 'fireSeverity';
-  }
+  function isRdaKey(key) {
+  return key === 'modisActive' ||
+         key === 'viirsActive' ||
+         key === 'modisBurnt' ||
+         key === 'nrtBurnt';
+}
 
   function createWmsLayer(key, url, wmsOptions){
     const layer = L.tileLayer.wms(url, Object.assign({}, PERF_OPTS, wmsOptions));
@@ -3930,30 +4214,7 @@ locateBtn?.addEventListener('click', () => {
       ]
     },
 
-    fireSeverity: {
-  title: 'WEEKLY BURNT AREAS',
-  entries: [
-    {
-      color: '#e53935',
-      label: 'Last 1 Day',
-      shape: 'square'
-    },
-    {
-      color: '#fb8c00',
-      label: 'Last 7 Days',
-      shape: 'square'
-    },
-    {
-      color: '#1e88e5',
-      label: 'Last 30 Days',
-      shape: 'square'
-    },
-    { color: '#7b1a1a', label: 'Last 1 Day', shape: 'rect' },
-        { color: '#a06a1a', label: 'Last 7 Days', shape: 'rect' },
-        { color: '#26a69a', label: 'Last 30 Days', shape: 'rect' },
-        { color: '#4caf50', label: 'Fire Season', shape: 'rect' }
-  ]
-},
+    
 
 nrtBurnt: {
   title: 'MODIS & VIIRS NRT',
@@ -5686,10 +5947,26 @@ if (typeof map !== 'undefined') {
   });
 
   // Общ refresh за двата "Forecasts" слоя - викан при всяка промяна на датата от календара
-  function refreshForecastLayers(){
-    refreshFireDangerLayer();
-    refreshLightningLayer();
+  function refreshForecastLayers() {
+  refreshFireDangerLayer();
+  refreshLightningLayer();
+
+  if (windEnabled) {
+    windStopPlayback();
+    clearTimeout(windMoveTimer);
+
+    windForecastIndex = 0;
+    windForecastTimes = [];
+
+    if (windLayerGroup) {
+      windLayerGroup.clearLayers();
+      delete windLayerGroup._windForecastPoints;
+    }
+
+    windUpdateTimelineUI();
+    windRefresh();
   }
+}
 
   // ---------- Календар за Forecasts: избор на конкретна дата (включително изминали дни) ----------
   const forecastDateInput = document.getElementById('forecastDateInput');
@@ -5795,10 +6072,6 @@ if (typeof map !== 'undefined') {
     url = RDA_EFFIS;
     layerName = 'effis.nrt.ba';
 
-  } else if (key === 'fireSeverity') {
-    url = RDA_EFFIS;
-    layerName = 'modis.ba.week';
-
   } else {
     return null;
   }
@@ -5809,13 +6082,10 @@ if (typeof map !== 'undefined') {
     transparent: true,
     singletile: false,
     version: '1.1.1',
+    time: timeParamFor(currentRange),
     attribution:
       'EFFIS Rapid Damage Assessment &copy; Copernicus EMS / JRC'
   };
-
-  if (key !== 'fireSeverity') {
-    wmsOptions.time = timeParamFor(currentRange);
-  }
 
   return createWmsLayer(key, url, wmsOptions);
 }
@@ -5855,10 +6125,7 @@ if (typeof map !== 'undefined') {
   });
   document.getElementById('chkModisBurnt').addEventListener('change', e => toggleRdaLayer('modisBurnt', e.target.checked));
   document.getElementById('chkNrtBurnt').addEventListener('change', e => toggleRdaLayer('nrtBurnt', e.target.checked));
-  document.getElementById('chkFireSeverity').addEventListener(
-  'change',
-  e => toggleRdaLayer('fireSeverity', e.target.checked)
-);
+  
 
 
   // Бутони за бърз диапазон (Last 1/7/30 Days + Fire Season) - единствен избор помежду им
@@ -5908,9 +6175,24 @@ if (typeof map !== 'undefined') {
 
   // ---------- Mobile sidebar toggle ----------
   const sidebar = document.getElementById('sidebar');
-  document.getElementById('sidebarToggle').addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
+const sidebarToggle = document.getElementById('sidebarToggle');
+
+sidebarToggle.setAttribute('aria-controls', 'sidebar');
+sidebarToggle.setAttribute('aria-expanded', 'false');
+
+sidebarToggle.addEventListener('click', () => {
+  const isOpen = sidebar.classList.toggle('open');
+
+  sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+  sidebarToggle.setAttribute(
+    'aria-label',
+    isOpen ? 'Затвори менюто' : 'Отвори менюто'
+  );
+
+  sidebarToggle.innerHTML = isOpen
+    ? '<i class="fa-solid fa-xmark"></i>'
+    : '<i class="fa-solid fa-bars"></i>';
+});
 
   // ---------- Burnt Area Locator ----------
   // ВНИМАНИЕ: това е нова, непроверена интеграция - използва WFS (не WMS), за да вземе конкретни
@@ -6198,8 +6480,6 @@ if (typeof map !== 'undefined') {
 const FIRE_CHART_MODELS = {
   'ECMWF (8 km res.)': 'ecmwf',
 
-  // Временно; потвърди с Network от официалния Viewer,
-  // когато избереш Meteo France там.
   'Meteo France (10 km res.)': 'mf'
 };
 
@@ -7381,36 +7661,20 @@ function windArrowScale(speed) {
 
 function windFormatTime(isoTime) {
   if (!isoTime) {
-    return 'Now';
+    return 'Select forecast time';
   }
 
-  const date = new Date(isoTime);
+  const match = String(isoTime).match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2})/
+  );
 
-  if (Number.isNaN(date.getTime())) {
-    return isoTime;
+  if (!match) {
+    return String(isoTime);
   }
 
-  const now = new Date();
-  const sameDay =
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate();
+  const [, year, month, day, time] = match;
 
-  const hourText = date.toLocaleTimeString('bg-BG', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  if (sameDay) {
-    return `Today · ${hourText}`;
-  }
-
-  const dayText = date.toLocaleDateString('bg-BG', {
-    day: '2-digit',
-    month: '2-digit'
-  });
-
-  return `${dayText} · ${hourText}`;
+  return `${day}.${month}.${year} ${time}`;
 }
 
 function windUpdateTimelineUI() {
@@ -7507,6 +7771,24 @@ function windBuildGrid() {
 }
 
 async function windFetch(points, reqId) {
+  const selectedDay = isoDate(selectedForecastDate);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const selected = new Date(selectedDay + 'T00:00:00');
+
+  const dayDifference = Math.round(
+    (selected.getTime() - today.getTime()) / 86400000
+  );
+
+  // За по-стари дати използваме историческия архив.
+  const useArchive = dayDifference < -5;
+
+  const apiUrl = useArchive
+    ? 'https://archive-api.open-meteo.com/v1/archive'
+    : WIND_API;
+
   const params = new URLSearchParams({
     latitude: points.map(point => point.lat).join(','),
     longitude: points.map(point => point.lng).join(','),
@@ -7516,38 +7798,63 @@ async function windFetch(points, reqId) {
       'wind_direction_10m,' +
       'wind_gusts_10m',
 
-    forecast_days: '2',
+    start_date: selectedDay,
+    end_date: selectedDay,
+
     wind_speed_unit: 'kmh',
     timezone: 'Europe/Sofia'
   });
 
   const response = await fetch(
-    WIND_API + '?' + params.toString()
+    apiUrl + '?' + params.toString()
   );
-
-  if (!response.ok) {
-    throw new Error(
-      'Open-Meteo error: ' + response.status
-    );
-  }
 
   const data = await response.json();
 
   if (reqId !== windRequestId) {
-    return {
-      times: [],
-      points: []
-    };
+    return { times: [], points: [] };
+  }
+
+  if (!response.ok || data?.error) {
+    throw new Error(
+      data?.reason ||
+      'Open-Meteo error: ' + response.status
+    );
   }
 
   const list = Array.isArray(data) ? data : [data];
 
   const firstHourly = list[0]?.hourly || {};
+
   const allTimes = Array.isArray(firstHourly.time)
     ? firstHourly.time
     : [];
 
-  const times = allTimes.slice(0, WIND_FORECAST_HOURS);
+  // Избираме само часовете от датата в календара.
+  const selectedIndexes = [];
+
+  allTimes.forEach((time, index) => {
+    if (String(time).startsWith(selectedDay + 'T')) {
+      selectedIndexes.push(index);
+    }
+  });
+
+  const times = selectedIndexes.map(index => allTimes[index]);
+
+  if (!times.length) {
+    throw new Error(
+      'No wind data available for ' + selectedDay + '.'
+    );
+  }
+
+  const numericValue = value => {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  };
 
   const windPoints = list.map((entry, index) => {
     const hourly = entry.hourly || {};
@@ -7559,33 +7866,40 @@ async function windFetch(points, reqId) {
       return null;
     }
 
+    const speeds = selectedIndexes.map(i =>
+      numericValue(hourly.wind_speed_10m[i])
+    );
+
+    const directions = selectedIndexes.map(i =>
+      numericValue(hourly.wind_direction_10m[i])
+    );
+
+    const gusts = selectedIndexes.map(i =>
+      numericValue(hourly.wind_gusts_10m?.[i])
+    );
+
+    const hasValidData = speeds.some((speed, i) =>
+      speed !== null && directions[i] !== null
+    );
+
+    if (!hasValidData) {
+      return null;
+    }
+
     return {
-      lat: entry.latitude !== undefined
-        ? entry.latitude
-        : points[index].lat,
-
-      lng: entry.longitude !== undefined
-        ? entry.longitude
-        : points[index].lng,
-
-      speeds: hourly.wind_speed_10m.slice(
-        0,
-        WIND_FORECAST_HOURS
-      ),
-
-      directions: hourly.wind_direction_10m.slice(
-        0,
-        WIND_FORECAST_HOURS
-      ),
-
-      gusts: Array.isArray(hourly.wind_gusts_10m)
-        ? hourly.wind_gusts_10m.slice(
-            0,
-            WIND_FORECAST_HOURS
-          )
-        : []
+      lat: entry.latitude ?? points[index].lat,
+      lng: entry.longitude ?? points[index].lng,
+      speeds,
+      directions,
+      gusts
     };
   }).filter(Boolean);
+
+  if (!windPoints.length) {
+    throw new Error(
+      'No valid wind data available for ' + selectedDay + '.'
+    );
+  }
 
   return {
     times,
@@ -7673,12 +7987,9 @@ function windRenderForecastFrame(forecastPoints) {
   windLayerGroup.clearLayers();
 
   forecastPoints.forEach(point => {
-    const speed = Number(point.speeds[windForecastIndex]);
-    const direction = Number(
-      point.directions[windForecastIndex]
-    );
-
-    const gust = Number(point.gusts[windForecastIndex]);
+    const speed = point.speeds[windForecastIndex];
+    const direction = point.directions[windForecastIndex];
+    const gust = point.gusts[windForecastIndex];
 
     if (
       !Number.isFinite(speed) ||
@@ -7761,12 +8072,30 @@ async function windRefresh() {
       result.points.length + ' pts'
     );
   } catch (error) {
-    console.error('Wind field failed:', error);
+  console.error('Wind field failed:', error);
 
-    if (reqId === windRequestId) {
-      windSetStatus('error', true);
+  if (reqId === windRequestId && windEnabled) {
+    windStopPlayback();
+
+    if (windLayerGroup) {
+      windLayerGroup.clearLayers();
+      delete windLayerGroup._windForecastPoints;
+    }
+
+    windForecastTimes = [];
+    windForecastIndex = 0;
+
+    windUpdateTimelineUI();
+    windSetStatus('No data / error', true);
+
+    if (windTimeDisplayEl) {
+      windTimeDisplayEl.textContent =
+        'No wind data: ' + isoDate(selectedForecastDate);
+
+      windTimeDisplayEl.title = error.message;
     }
   }
+}
 }
 
 function windSetForecastIndex(nextIndex) {
@@ -9066,7 +9395,7 @@ async function calculateNearestEvacuationRoute() {
     }
 
     validRoutes.sort(
-      (a, b) => a.route.distance - b.route.distance
+      (a, b) => a.route.duration - b.route.duration
     );
 
     const best = validRoutes[0];
@@ -9408,7 +9737,7 @@ async function calculateEvacuationRouteToHospital() {
     }
 
     validRoutes.sort(
-      (a, b) => a.route.distance - b.route.distance
+      (a, b) => a.route.duration - b.route.duration
     );
 
     const best = validRoutes[0];
@@ -11406,6 +11735,17 @@ document.addEventListener('keydown', function (e) {
   window.bgMunicipalityCount = munis.length;
 })();
 
+
+[
+  document.getElementById('sidebar'),
+  document.getElementById('sidebarToggle'),
+  document.querySelector('.map-toolbar'),
+  document.getElementById('searchBox'),
+  document.getElementById('searchResults')
+].filter(Boolean).forEach(element => {
+  L.DomEvent.disableClickPropagation(element);
+  L.DomEvent.disableScrollPropagation(element);
+});
 </script>
 
 </body>
